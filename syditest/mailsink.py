@@ -43,7 +43,7 @@ class MailSink(object):
         self.process.start()
 
     def getMail(self):
-        return self.queue.get()
+        return self.queue.get(timeout=5.0)
 
     def tearDown(self):
         self.process.terminate()
