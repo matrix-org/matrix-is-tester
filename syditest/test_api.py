@@ -20,7 +20,6 @@ import unittest
 import requests
 import re
 import sys
-import atexit
 import random
 import string
 import json
@@ -31,42 +30,8 @@ import json
 from twisted.python import log
 
 from .mailsink import MailSink
+from .launch_is import getOrLaunchIS
 
-try:
-    from syditest_subject.launcher import SyditestLauncher
-except ImportError:
-    print("ERROR: Couldn't import launcher")
-    print(
-        "syditest needs an identity server to test: make sure, "
-        "'syditest_subject.launcher.SyditestLauncher' is in "
-        "sys.path"
-    )
-    
-    raise
-
-launcher = None
-baseUrl = None
-
-def getOrLaunchIS():
-    global launcher
-    global baseUrl
-
-    if launcher is not None:
-        return baseUrl
-
-    launcher = SyditestLauncher()
-    baseUrl = launcher.launch()
-
-    atexit.register(destroyIS)
-
-    return baseUrl
-
-def destroyIS():
-    global launcher
-
-    if launcher is not None:
-        launcher.tearDown()
-    
 
 class IsApiTest(unittest.TestCase):
     def setUp(self):
