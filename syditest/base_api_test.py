@@ -25,10 +25,11 @@ import random
 # use python 'logging': it only works if you use Twisted's own.
 from twisted.python import log
 
-
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
 from .mailsink import MailSink
+from .fakehs import FakeHomeserver
+
 
 # Not a test case itself, but can be subclassed to test APIs common
 # between versions. Subclasses provide self.api

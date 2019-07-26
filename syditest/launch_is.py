@@ -30,25 +30,24 @@ except ImportError:
     
     raise
 
-launcher = None
-baseUrl = None
+launchers = {}
 
-def getOrLaunchIS():
-    global launcher
-    global baseUrl
+def getOrLaunchIS(withTerms=False):
+    global launchers
 
-    if launcher is not None:
-        return baseUrl
+    key = 'withTerms' if withTerms else 'noTerms'
 
-    launcher = SyditestLauncher()
-    baseUrl = launcher.launch()
+    if key not in launchers:
+        if not launchers:
+            atexit.register(destroyAll)
 
-    atexit.register(destroyIS)
+        launchers[key] = SyditestLauncher(withTerms)
+        launchers[key].launch()
 
-    return baseUrl
+    return launchers[key].getBaseUrl()
 
-def destroyIS():
-    global launcher
+def destroyAll():
+    global launchers
 
-    if launcher is not None:
+    for launcher in launchers.values():
         launcher.tearDown()

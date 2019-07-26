@@ -25,6 +25,9 @@ from twisted.python import log
 
 class IsApi(object):
     def __init__(self, baseUrl, version, mailSink):
+        self.headers = None
+
+        self.version = version
         if version == 'v1':
             self.apiRoot = baseUrl + '/_matrix/identity/api/v1';
         elif version == 'v2':
@@ -33,6 +36,15 @@ class IsApi(object):
             raise Exception("Invalid version: %s" % (version,))
 
         self.mailSink = mailSink
+
+    # Uses the /register API to create an account. This account will be used for all subsequent
+    # API calls that requrie auth.
+    def makeAccount(self, hsAddr):
+        if self.version != 'v2':
+            raise Exception("Only v2 supports authentication")
+
+        body = self.register(':'.join([str(x) for x in hsAddr]), 'dummy')
+        self.headers = {'Authorization': 'Bearer %s' % (body['access_token'],)}
 
     def getTokenFromMail(self):
         mail = self.mailSink.getMail()
@@ -58,6 +70,7 @@ class IsApi(object):
                 'email': address,
                 'send_attempt': sendAttempt,
             },
+            headers=self.headers,
         )
         return resp.json()
 
@@ -69,6 +82,7 @@ class IsApi(object):
                 'sid': sid,
                 'token': token,
             },
+            headers=self.headers,
         )
         return resp.content
 
@@ -86,6 +100,7 @@ class IsApi(object):
                 'sid': sid,
                 'token': token,
             },
+            headers=self.headers,
         )
         body = resp.json()
         log.msg("submitToken returned %r", body)
@@ -101,6 +116,7 @@ class IsApi(object):
                 'sid': sid,
                 'mxid': mxid,
             },
+            headers=self.headers,
         )
         return resp.json()
 
@@ -111,6 +127,7 @@ class IsApi(object):
                 'medium': medium,
                 'address': address,
             },
+            headers=self.headers,
         )
         return resp.json()
 
@@ -120,6 +137,7 @@ class IsApi(object):
             json={
                 'threepids': threepids,
             },
+            headers=self.headers,
         )
         return resp.json()
         
@@ -130,6 +148,7 @@ class IsApi(object):
                 'sid': sid,
                 'client_secret': clientSecret,
             },
+            headers=self.headers,
         )
         return resp.json()
 
@@ -137,6 +156,7 @@ class IsApi(object):
         resp = requests.post(
             self.apiRoot + '/store-invite',
             json=params,
+            headers=self.headers,
         )
         return resp.json()
 
@@ -145,6 +165,32 @@ class IsApi(object):
             url,
             params={
                 'public_key': pubkey,
+            },
+        )
+        return resp.json()
+
+    def getTerms(self):
+        resp = requests.get(
+            self.apiRoot + '/terms',
+        )
+        return resp.json()
+
+    def agreeToTerms(self, userAccepts):
+        resp = requests.post(
+            self.apiRoot + '/terms',
+            json={
+                'user_accepts': userAccepts,
+            },
+            headers=self.headers,
+        )
+        return resp.json()
+
+    def register(self, matrixServerName, accessToken):
+        resp = requests.post(
+            self.apiRoot + '/account/register',
+            json={
+                'matrix_server_name': matrixServerName,
+                'access_token': accessToken,
             },
         )
         return resp.json()

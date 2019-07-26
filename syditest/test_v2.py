@@ -20,10 +20,21 @@ import unittest
 
 from .is_api import IsApi
 from .base_api_test import BaseApiTest
+from .fakehs import FakeHomeserver
 
 
-class V1Test(BaseApiTest, unittest.TestCase):
-    API_VERSION = 'v1'
+class V2Test(BaseApiTest, unittest.TestCase):
+    API_VERSION = 'v2'
+
+    def setUp(self):
+        super(V2Test, self).setUp()
+        self.fakeHs = FakeHomeserver()
+        self.fakeHsAddr = self.fakeHs.launch()
+        self.api.makeAccount(self.fakeHsAddr)
+
+    def tearDown(self):
+        super(V2Test, self).tearDown()
+        self.fakeHs.tearDown()
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)
