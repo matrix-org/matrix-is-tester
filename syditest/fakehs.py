@@ -48,7 +48,7 @@ class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return
 
 def runHttpServer():
-    certFile = os.path.join(os.path.dirname(__file__), '..', 'fakehs.pem')
+    certFile = os.path.join(os.path.dirname(__file__), 'fakehs.pem')
 
     httpd = BaseHTTPServer.HTTPServer(('localhost', 4490), FakeHomeserverRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=certFile, server_side=True)
