@@ -10,4 +10,5 @@ setup(
         "Twisted>=19.2.1",
         "requests==2.22.0"
     ],
+    include_package_data=True,
 )
