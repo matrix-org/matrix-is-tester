@@ -27,8 +27,7 @@ from twisted.python import log
 
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
-from .mailsink import MailSink
-from .fakehs import FakeHomeserver
+from .mailsink import getSharedMailSink
 
 
 # Not a test case itself, but can be subclassed to test APIs common
@@ -37,15 +36,11 @@ class BaseApiTest():
     def setUp(self):
         self.baseUrl = getOrLaunchIS()
 
-        self.mailSink = MailSink()
-        self.mailSink.launch()
+        self.mailSink = getSharedMailSink()
 
         self.api = IsApi(self.baseUrl, self.API_VERSION, self.mailSink)
 
         random.seed(1)
-
-    def tearDown(self):
-        self.mailSink.tearDown()
 
     def test_v1ping(self):
         body = self.api.ping()
@@ -55,6 +50,7 @@ class BaseApiTest():
         body = self.api.requestEmailCode('fakeemail1@nowhere.test', 'sekrit', 1)
         log.msg("Got response %r", body)
         self.assertIn('sid', body)
+        self.mailSink.getMail()
 
     def test_rejectInvalidEmail(self):
         body = self.api.requestEmailCode('fakeemail1@nowhere.test@elsewhere.test', 'sekrit', 1)
@@ -103,6 +99,8 @@ class BaseApiTest():
 
     def test_unverified_bind(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
+        # get the mail so we don't leave it in the queue
+        self.mailSink.getMail()
         body = self.api.bindEmail(reqCodeBody['sid'], 'sekrit', '@thing1:fake.test')
         self.assertEquals(body['errcode'], 'M_SESSION_NOT_VALIDATED')
 
@@ -133,6 +131,8 @@ class BaseApiTest():
 
     def test_getValidatedThreepid_notValidated(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
+        # get the mail, otherwise the next test will get it instead of the one it was expecting
+        self.mailSink.getMail()
 
         getValBody = self.api.getValidatedThreepid(reqCodeBody['sid'], 'sekrit')
         self.assertEquals(getValBody['errcode'], 'M_SESSION_NOT_VALIDATED')
@@ -159,6 +159,7 @@ class BaseApiTest():
             self.assertTrue(isValidBody['valid'])
 
         mail = self.mailSink.getMail()
+        log.msg("Got email (invite): %r", mail)
         mailObject = json.loads(mail['data'])
         self.assertEquals(mailObject['token'], body['token'])
         self.assertEquals(mailObject['room_alias'], '#alias:fake.test')

@@ -16,8 +16,24 @@
 
 import smtpd
 import asyncore
+import atexit
 
 from multiprocessing import Process, Queue
+from Queue import Empty as QueueEmpty
+
+sharedInstance = None
+
+def getSharedMailSink():
+    global sharedInstance
+    if sharedInstance is None:
+        sharedInstance = MailSink()
+        sharedInstance.launch()
+        atexit.register(destroyShared)
+    return sharedInstance
+
+def destroyShared():
+    global sharedInstance
+    sharedInstance.tearDown()
 
 class MailSinkSmtpServer(smtpd.SMTPServer):
     def __init__(self, localaddr, remoteaddr, q):
