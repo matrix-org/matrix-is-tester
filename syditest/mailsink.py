@@ -16,6 +16,8 @@
 
 import smtpd
 import asyncore
+import socket
+import time
 
 from multiprocessing import Process, Queue
 
@@ -33,7 +35,16 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         })
 
 def runMailSink(q):
-    smtpServer = MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
+    for i in range(5):
+        # asynccore sets SO_REUSEADDR but this still appears to fail sometimes
+        try:
+            smtpServer = MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
+        except socket.error:
+            if i < 4:
+                time.sleep(1)
+                pass
+            else:
+                raise
     asyncore.loop()
 
 class MailSink(object):
