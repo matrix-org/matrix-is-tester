@@ -23,6 +23,8 @@ import re
 
 from twisted.python import log
 
+from .fakehs import tokenForRandomUser
+
 class IsApi(object):
     def __init__(self, baseUrl, version, mailSink):
         self.headers = None
@@ -39,11 +41,14 @@ class IsApi(object):
 
     # Uses the /register API to create an account. This account will be used for all subsequent
     # API calls that requrie auth.
-    def makeAccount(self, hsAddr):
+    def makeAccount(self, hsAddr, openidToken=None):
         if self.version != 'v2':
             raise Exception("Only v2 supports authentication")
 
-        body = self.register(':'.join([str(x) for x in hsAddr]), 'dummy')
+        if openidToken == None:
+            openidToken = tokenForRandomUser()
+
+        body = self.register(':'.join([str(x) for x in hsAddr]), openidToken)
         self.headers = {'Authorization': 'Bearer %s' % (body['access_token'],)}
 
     def getTokenFromMail(self):
@@ -192,5 +197,19 @@ class IsApi(object):
                 'matrix_server_name': matrixServerName,
                 'access_token': accessToken,
             },
+        )
+        return resp.json()
+
+    def account(self):
+        resp = requests.get(
+            self.apiRoot + '/account',
+            headers=self.headers,
+        )
+        return resp.json()
+
+    def logout(self):
+        resp = requests.post(
+            self.apiRoot + '/account/logout',
+            headers=self.headers,
         )
         return resp.json()

@@ -21,12 +21,23 @@ import json
 import ssl
 import random
 import atexit
+import urlparse
+import base64
 from multiprocessing import Process
 
 
 random.seed(1)
 
 sharedFakeHs = None
+
+
+def tokenForRandomUser():
+    num = random.randint(0, 2**32)
+    userId = '@user%d:localhost:4490' % (num,)
+    return 'user:%s' % (base64.b64encode(userId),)
+
+def tokenForUser(userId):
+    return 'user:%s' % (base64.b64encode(userId),)
 
 def getSharedFakeHs():
     global sharedFakeHs
@@ -42,9 +53,26 @@ def destroyShared():
 class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith('/_matrix/federation/v1/openid/userinfo'):
-            userid = random.randint(0, 2**32)
+            parsed = urlparse.urlparse(self.path)
+            params = urlparse.parse_qs(parsed.query)
+
+            token = params['access_token'][0]
+
+            if token.startswith('user:'):
+                userid = base64.b64decode(token.split(':')[1])
+            else:
+                resp = json.dumps({
+                    'errcode': 'M_UNKNOWN_TOKEN',
+                    'error': 'Not a valid token: try again.',
+                })
+                self.send_response(401)
+                self.send_header('Content-Length', len(resp))
+                self.end_headers()
+
+                self.wfile.write(resp)
+
             resp = json.dumps({
-                'sub': '@user%d:localhost:4490' % (userid,),
+                'sub': userid,
             })
 
             self.send_response(200)
