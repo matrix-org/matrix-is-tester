@@ -75,41 +75,35 @@ class BaseApiTest():
 
     def test_bind_and_lookup(self):
         params = self.api.requestAndSubmitEmailCode('fakeemail3@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
+        body = self.api.bindEmail(params['sid'], params['client_secret'], '@commonapitests:fake.test')
 
         self.assertEquals(body['medium'], 'email')
         self.assertEquals(body['address'], "fakeemail3@nowhere.test")
-        self.assertEquals(body['mxid'], "@some_mxid:fake.test")
+        self.assertEquals(body['mxid'], "@commonapitests:fake.test")
 
         body2 = self.api.lookup('email', "fakeemail3@nowhere.test")
 
         self.assertEquals(body2['medium'], 'email')
         self.assertEquals(body2['address'], 'fakeemail3@nowhere.test')
-        self.assertEquals(body2['mxid'], '@some_mxid:fake.test')
+        self.assertEquals(body2['mxid'], '@commonapitests:fake.test')
 
         self.assertEquals(body['ts'], body2['ts'])
         self.assertEquals(body['not_before'], body2['not_before'])
         self.assertEquals(body['not_after'], body2['not_after'])
 
-    def test_bind_toBadMxid(self):
-        raise unittest.SkipTest("sydent allows this currently")
-        params = self.api.requestAndSubmitEmailCode('perfectly_valid_email@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], 'not a valid mxid')
-        self.assertEquals(body['errcode'], 'M_INVALID_PARAM')
-
     def test_unverified_bind(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
         # get the mail so we don't leave it in the queue
         self.mailSink.getMail()
-        body = self.api.bindEmail(reqCodeBody['sid'], 'sekrit', '@thing1:fake.test')
+        body = self.api.bindEmail(reqCodeBody['sid'], 'sekrit', '@commonapitests:fake.test')
         self.assertEquals(body['errcode'], 'M_SESSION_NOT_VALIDATED')
 
     def test_bulk_lookup(self):
         params = self.api.requestAndSubmitEmailCode('thing1@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing1:fake.test')
+        body = self.api.bindEmail(params['sid'], params['client_secret'], '@commonapitests:fake.test')
 
         params = self.api.requestAndSubmitEmailCode('thing2@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing2:fake.test')
+        body = self.api.bindEmail(params['sid'], params['client_secret'], '@commonapitests:fake.test')
 
         body = self.api.bulkLookup([
             ('email', 'thing1@nowhere.test'),
@@ -117,8 +111,8 @@ class BaseApiTest():
             ('email', 'thing3@nowhere.test'),
         ])
 
-        self.assertIn(['email', 'thing1@nowhere.test', '@thing1:fake.test'], body['threepids'])
-        self.assertIn(['email', 'thing2@nowhere.test', '@thing2:fake.test'], body['threepids'])
+        self.assertIn(['email', 'thing1@nowhere.test', '@commonapitests:fake.test'], body['threepids'])
+        self.assertIn(['email', 'thing2@nowhere.test', '@commonapitests:fake.test'], body['threepids'])
         self.assertEquals(len(body['threepids']), 2)
 
     def test_getValidatedThreepid(self):
@@ -143,11 +137,9 @@ class BaseApiTest():
             'address': 'ian@fake.test',
             'room_id': '$aroom:fake.test',
             'sender': '@sender:fake.test',
-            'room_alias': '#alias:fake.test',
             'room_avatar_url': 'mxc://fake.test/roomavatar',
             'room_name': 'my excellent room',
             'sender_display_name': 'Ian Sender',
-            'sender_avatar_url': 'mxc://fake.test/iansavatar',
         })
         self.assertGreater(len(body['token']), 0)
         # must be redacted
@@ -162,15 +154,13 @@ class BaseApiTest():
         log.msg("Got email (invite): %r", mail)
         mailObject = json.loads(mail['data'])
         self.assertEquals(mailObject['token'], body['token'])
-        self.assertEquals(mailObject['room_alias'], '#alias:fake.test')
         self.assertEquals(mailObject['room_avatar_url'], 'mxc://fake.test/roomavatar')
         self.assertEquals(mailObject['room_name'], 'my excellent room')
         self.assertEquals(mailObject['sender_display_name'], 'Ian Sender')
-        self.assertEquals(mailObject['sender_avatar_url'], 'mxc://fake.test/iansavatar')
 
     def test_storeInvite_boundThreepid(self):
         params = self.api.requestAndSubmitEmailCode('already_here@fake.test')
-        self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
+        self.api.bindEmail(params['sid'], params['client_secret'], '@commonapitests:fake.test')
 
         body = self.api.storeInvite({
             'medium': 'email',

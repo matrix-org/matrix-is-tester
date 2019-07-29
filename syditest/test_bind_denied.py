@@ -19,17 +19,25 @@
 import unittest
 
 from .is_api import IsApi
-from .base_api_test import BaseApiTest
+from .launch_is import getOrLaunchIS
+from .mailsink import getSharedMailSink
 from .fakehs import getSharedFakeHs, tokenForUser
 
 
-class V2Test(BaseApiTest, unittest.TestCase):
-    API_VERSION = 'v2'
-
+class AccountTest(unittest.TestCase):
     def setUp(self):
-        super(V2Test, self).setUp()
         self.fakeHs = getSharedFakeHs()
-        self.api.makeAccount(self.fakeHs.getAddr(), tokenForUser('@commonapitests:fake.test'))
+        self.fakeHsAddr = self.fakeHs.getAddr()
+        self.mailSink = getSharedMailSink()
+
+    def test_bind_notYourMxid(self):
+        baseUrl = getOrLaunchIS(False)
+        api = IsApi(baseUrl, 'v2', self.mailSink)
+        api.makeAccount(self.fakeHsAddr, tokenForUser('@bob:fake.test'))
+
+        params = api.requestAndSubmitEmailCode('perfectly_valid_email@nowhere.test')
+        body = api.bindEmail(params['sid'], params['client_secret'], '@alice:fake.test')
+        self.assertEquals(body['errcode'], 'M_UNAUTHORIZED')
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)
