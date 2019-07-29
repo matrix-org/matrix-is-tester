@@ -33,7 +33,7 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         })
 
 def runMailSink(q):
-    smtpServer = MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
+    smtpServer = MailSinkSmtpServer(('127.0.0.1', 9925), None, q)
     asyncore.loop()
 
 class MailSink(object):
