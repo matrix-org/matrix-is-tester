@@ -20,16 +20,13 @@ import unittest
 
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
-from .fakehs import FakeHomeserver
+from .fakehs import getSharedFakeHs
 
 
 class TermsTest(unittest.TestCase):
     def setUp(self):
-        self.fakeHs = FakeHomeserver()
-        self.fakeHsAddr = self.fakeHs.launch()
-
-    def tearDown(self):
-        self.fakeHs.tearDown()
+        self.fakeHs = getSharedFakeHs()
+        self.fakeHsAddr = self.fakeHs.getAddr()
 
     def test_getTerms(self):
         baseUrl = getOrLaunchIS(True)

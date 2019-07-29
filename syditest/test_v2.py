@@ -20,7 +20,7 @@ import unittest
 
 from .is_api import IsApi
 from .base_api_test import BaseApiTest
-from .fakehs import FakeHomeserver
+from .fakehs import getSharedFakeHs
 
 
 class V2Test(BaseApiTest, unittest.TestCase):
@@ -28,13 +28,8 @@ class V2Test(BaseApiTest, unittest.TestCase):
 
     def setUp(self):
         super(V2Test, self).setUp()
-        self.fakeHs = FakeHomeserver()
-        self.fakeHsAddr = self.fakeHs.launch()
-        self.api.makeAccount(self.fakeHsAddr)
-
-    def tearDown(self):
-        super(V2Test, self).tearDown()
-        self.fakeHs.tearDown()
+        self.fakeHs = getSharedFakeHs()
+        self.api.makeAccount(self.fakeHs.getAddr())
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)

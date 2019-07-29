@@ -20,10 +20,24 @@ import os
 import json
 import ssl
 import random
+import atexit
 from multiprocessing import Process
 
 
 random.seed(1)
+
+sharedFakeHs = None
+
+def getSharedFakeHs():
+    global sharedFakeHs
+    if sharedFakeHs == None:
+        sharedFakeHs = FakeHomeserver()
+        sharedFakeHs.launch()
+        atexit.register(destroyShared)
+    return sharedFakeHs
+
+def destroyShared():
+    sharedFakeHs.tearDown()
 
 class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -58,6 +72,8 @@ class FakeHomeserver(object):
     def launch(self):
         self.process = Process(target=runHttpServer)
         self.process.start()
+
+    def getAddr(self):
         return ('localhost', 4490)
 
     def tearDown(self):
