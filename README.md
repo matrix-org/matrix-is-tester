@@ -4,9 +4,6 @@ Syditest
 Syditest is an integration testing system for Matrix Identity servers, similar
 to sytest (although using python rather than perl).
 
-Syditest is a standard set of python unit tests, although is intended to be run
-with Twisted's Trial.
-
 To launch the IS server, it attempts to import
 `syditest_subject.launcher.SyditestLauncher`. This must be provided separately
 for the specific ID server implementation to be tested. See sydent's implementation
