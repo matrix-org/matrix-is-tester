@@ -5,7 +5,7 @@ steps:
       - "echo '+++ Lint'"
       - "flake8 syditest"
       - "echo '+++ isort'"
-      - "isort -rc -c syditest"
+      - "isort -rc -c -vb syditest"
     label: "Lint"
     timeout_in_minutes: 5
     plugins:
