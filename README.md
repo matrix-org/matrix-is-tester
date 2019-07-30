@@ -1,7 +1,7 @@
 Syditest
 ========
 
-Syditest is an integrations testing system for Matrix Identity servers, similar
+Syditest is an integration testing system for Matrix Identity servers, similar
 to sytest (although using python rather than perl).
 
 Syditest is a standard set of python unit tests, although is intended to be run
