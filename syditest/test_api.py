@@ -27,8 +27,7 @@ import unittest
 from twisted.python import log
 
 import requests
-
-from .mailsink import MailSink
+from syditest.mailsink import MailSink
 
 try:
     from syditest_subject.launcher import SyditestLauncher
