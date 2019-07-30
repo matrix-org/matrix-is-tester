@@ -14,9 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import smtpd
 import asyncore
-
+import smtpd
 from multiprocessing import Process, Queue
 
 

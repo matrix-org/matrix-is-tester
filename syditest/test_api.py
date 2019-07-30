@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-import requests
+import atexit
 import re
 import sys
-import atexit
+import unittest
 
+import requests
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you
 # use python 'logging': it only works if you use Twisted's own.
