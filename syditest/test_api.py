@@ -38,11 +38,12 @@ except ImportError:
         "'syditest_subject.launcher.SyditestLauncher' is in "
         "sys.path"
     )
-    
+
     raise
 
 launcher = None
 baseUrl = None
+
 
 def getOrLaunchIS():
     global launcher
@@ -58,12 +59,13 @@ def getOrLaunchIS():
 
     return baseUrl
 
+
 def destroyIS():
     global launcher
 
     if launcher is not None:
         launcher.tearDown()
-    
+
 
 class IsApiTest(unittest.TestCase):
     def setUp(self):
@@ -127,7 +129,7 @@ class IsApiTest(unittest.TestCase):
         body = resp.json()
         log.msg("submitToken returned %r", body)
         self.assertTrue(body['success'])
-        
+
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)

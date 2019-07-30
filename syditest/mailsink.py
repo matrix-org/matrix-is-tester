@@ -19,6 +19,7 @@ import asyncore
 
 from multiprocessing import Process, Queue
 
+
 class MailSinkSmtpServer(smtpd.SMTPServer):
     def __init__(self, localaddr, remoteaddr, q):
         smtpd.SMTPServer.__init__(self, localaddr, remoteaddr)
@@ -32,9 +33,11 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
             'data': data,
         })
 
+
 def runMailSink(q):
-    smtpServer = MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
+    MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
     asyncore.loop()
+
 
 class MailSink(object):
     def launch(self):
@@ -47,6 +50,7 @@ class MailSink(object):
 
     def tearDown(self):
         self.process.terminate()
+
 
 if __name__ == '__main__':
     ms = MailSink()

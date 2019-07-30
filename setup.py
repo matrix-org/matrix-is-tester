@@ -9,4 +9,7 @@ setup(
     install_requires=[
         "Twisted>=19.2.1",
     ],
+    test_requires=[
+        "flake8>=3.7.8",
+    ],
 )
