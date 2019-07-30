@@ -45,7 +45,7 @@ launcher = None
 baseUrl = None
 
 
-def getOrLaunchIS():
+def _getOrLaunchIS():
     global launcher
     global baseUrl
 
@@ -69,7 +69,7 @@ def destroyIS():
 
 class IsApiTest(unittest.TestCase):
     def setUp(self):
-        self.baseUrl = getOrLaunchIS()
+        self.baseUrl = _getOrLaunchIS()
 
         self.mailSink = MailSink()
         self.mailSink.launch()
