@@ -9,8 +9,8 @@ To launch the IS server, it attempts to import
 for the specific ID server implementation to be tested. See sydent's implementation
 for an example of how this works.
 
-Sydent supplies its syditest launcher in the project directory, and so launches
-syditest using:
+Sydent supplies its syditest launcher in the project directory, so to launch
+syditest on sydent you would run:
 
 ```
 PYTHONPATH="/path/to/sydent" trial syditest
