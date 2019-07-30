@@ -4,6 +4,8 @@ steps:
       - "pip install -e .[test]"
       - "echo '+++ Lint'"
       - "flake8 syditest"
+      - "echo '+++ isort'"
+      - "isort -rc -c syditest"
     label: "Lint"
     timeout_in_minutes: 5
     plugins:
