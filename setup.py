@@ -12,7 +12,7 @@ setup(
     extras_require={
         'test': [
             "flake8>=3.7.8",
-            "isort==4.3.21",
+            "isort>=4.3.21",
         ],
     },
 )
