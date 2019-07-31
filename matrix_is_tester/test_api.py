@@ -42,22 +42,22 @@ except ImportError:
     raise
 
 launcher = None
-baseUrl = None
+base_url = None
 
 
 def _getOrLaunchIS():
     global launcher
-    global baseUrl
+    global base_url
 
     if launcher is not None:
-        return baseUrl
+        return base_url
 
     launcher = MatrixIsTestLauncher()
-    baseUrl = launcher.launch()
+    base_url = launcher.launch()
 
     atexit.register(destroyIS)
 
-    return baseUrl
+    return base_url
 
 
 def destroyIS():
