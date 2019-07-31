@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='matrix-is-tester',
+    name='matrix_is_tester',
     version='0.1',
-    packages=['matrix-is-tester'],
+    packages=['matrix_is_tester'],
     description="Black-box integration testing for Matrix Identity Servers",
     long_description=open('README.md').read(),
     install_requires=[
