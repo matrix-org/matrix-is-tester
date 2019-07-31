@@ -8,6 +8,7 @@ setup(
     long_description=open('README.md').read(),
     install_requires=[
         "Twisted>=19.2.1",
+        "requests>=2.22.0",
     ],
     extras_require={
         'test': [
