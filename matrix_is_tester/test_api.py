@@ -27,15 +27,15 @@ import unittest
 from twisted.python import log
 
 import requests
-from matrix-is-tester.mailsink import MailSink
+from matrix_is_tester.mailsink import MailSink
 
 try:
-    from matrix-is-test.launcher import SyditestLauncher
+    from matrix_is_test.launcher import MatrixIsTestLauncher
 except ImportError:
     print("ERROR: Couldn't import launcher")
     print(
-        "matrix-is-tester needs an identity server to test: make sure, "
-        "'matrix-is-test.launcher.SyditestLauncher' is in "
+        "matrix_is_tester needs an identity server to test: make sure, "
+        "'matrix_is_test.launcher.MatrixIsTestLauncher' is in "
         "sys.path"
     )
 
@@ -52,7 +52,7 @@ def _getOrLaunchIS():
     if launcher is not None:
         return baseUrl
 
-    launcher = SyditestLauncher()
+    launcher = MatrixIsTestLauncher()
     baseUrl = launcher.launch()
 
     atexit.register(destroyIS)
