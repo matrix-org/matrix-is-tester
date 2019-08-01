@@ -25,16 +25,13 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         self.queue = q
 
     def process_message(self, peer, mailfrom, rctpto, data):
-        self.queue.put({
-            'peer': peer,
-            'mailfrom': mailfrom,
-            'rctpto': rctpto,
-            'data': data,
-        })
+        self.queue.put(
+            {"peer": peer, "mailfrom": mailfrom, "rctpto": rctpto, "data": data}
+        )
 
 
 def runMailSink(q):
-    MailSinkSmtpServer(('127.0.0.1', 1025), None, q)
+    MailSinkSmtpServer(("127.0.0.1", 1025), None, q)
     asyncore.loop()
 
 
@@ -51,7 +48,7 @@ class MailSink(object):
         self.process.terminate()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ms = MailSink()
     ms.launch()
     print("%r" % (ms.getMail(),))

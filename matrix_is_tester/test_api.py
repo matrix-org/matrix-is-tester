@@ -22,6 +22,7 @@ import sys
 import unittest
 
 import requests
+
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you
 # use python 'logging': it only works if you use Twisted's own.
@@ -78,59 +79,55 @@ class IsApiTest(unittest.TestCase):
         self.mailSink.tearDown()
 
     def test_v1ping(self):
-        resp = requests.get(self.baseUrl + '/_matrix/identity/api/v1')
+        resp = requests.get(self.baseUrl + "/_matrix/identity/api/v1")
         self.assertEquals(resp.json(), {})
 
     def test_requestEmailCode(self):
         resp = requests.post(
-            self.baseUrl + '/_matrix/identity/api/v1/validate/email/requestToken',
+            self.baseUrl + "/_matrix/identity/api/v1/validate/email/requestToken",
             json={
-                'client_secret': "sshitsasecret",
-                'email': "fakeemail@nowhere.test",
-                'send_attempt': 1,
+                "client_secret": "sshitsasecret",
+                "email": "fakeemail@nowhere.test",
+                "send_attempt": 1,
             },
         )
         body = resp.json()
         log.msg("Got response %r", body)
-        self.assertIn('sid', body)
+        self.assertIn("sid", body)
 
     def test_submitEmailCode(self):
         resp = requests.post(
-            self.baseUrl + '/_matrix/identity/api/v1/validate/email/requestToken',
+            self.baseUrl + "/_matrix/identity/api/v1/validate/email/requestToken",
             json={
-                'client_secret': "sosecret",
-                'email': "fakeemail@nowhere.test",
-                'send_attempt': 1,
+                "client_secret": "sosecret",
+                "email": "fakeemail@nowhere.test",
+                "send_attempt": 1,
             },
         )
         body = resp.json()
         log.msg("Got response %r", body)
-        self.assertIn('sid', body)
+        self.assertIn("sid", body)
 
         mail = self.mailSink.getMail()
         log.msg("Got email: %r", mail)
-        self.assertIn('data', mail)
+        self.assertIn("data", mail)
 
-        matches = re.match(r"<<<(.*)>>>", mail['data'])
+        matches = re.match(r"<<<(.*)>>>", mail["data"])
         self.assertTrue(matches.group(1))
         token = matches.group(1)
 
         log.msg("Token is %s", token)
 
-        sid = body['sid']
+        sid = body["sid"]
         resp = requests.post(
-            self.baseUrl + '/_matrix/identity/api/v1/validate/email/submitToken',
-            json={
-                'client_secret': "sosecret",
-                'sid': sid,
-                'token': token,
-            },
+            self.baseUrl + "/_matrix/identity/api/v1/validate/email/submitToken",
+            json={"client_secret": "sosecret", "sid": sid, "token": token},
         )
         body = resp.json()
         log.msg("submitToken returned %r", body)
-        self.assertTrue(body['success'])
+        self.assertTrue(body["success"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     log.startLogging(sys.stdout)
     unittest.main()

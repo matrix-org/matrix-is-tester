@@ -14,6 +14,7 @@ setup(
         'test': [
             "flake8>=3.7.8",
             "isort>=4.3.21",
+            "black>=19.3b0"
         ],
     },
 )
