@@ -3,9 +3,9 @@ steps:
       - "echo '--- Install dependencies'"
       - "pip install -e .[test]"
       - "echo '+++ Lint'"
-      - "flake8 matrix-is-tester"
+      - "flake8 matrix_is_tester"
       - "echo '+++ isort'"
-      - "isort -rc -c -vb matrix-is-tester"
+      - "isort -rc -c -vb matrix_is_tester"
     label: "Lint"
     timeout_in_minutes: 5
     plugins:
