@@ -54,5 +54,5 @@ class MailSink(object):
 if __name__ == '__main__':
     ms = MailSink()
     ms.launch()
-    print "%r" % (ms.getMail(),)
+    print("%r" % (ms.getMail(),))
     ms.tearDown()
