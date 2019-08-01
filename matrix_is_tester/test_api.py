@@ -22,10 +22,6 @@ import sys
 import unittest
 
 import requests
-
-# These are standard python unit tests, but are generally intended
-# to be run with trial. Trial doesn't capture logging nicely if you
-# use python 'logging': it only works if you use Twisted's own.
 from twisted.python import log
 
 from matrix_is_tester.mailsink import MailSink
