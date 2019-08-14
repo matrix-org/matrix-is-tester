@@ -13,7 +13,7 @@ Sydent supplies its matrix-is-tester launcher in the project directory, so to la
 matrix_is_tester on sydent you would run:
 
 ```
-PYTHONPATH="/path/to/sydent" trial matrix-is-tester
+PYTHONPATH="/path/to/sydent" trial matrix_is_tester
 ```
 
 ...which puts the launcher on the PYTHONPATH and invokes trial on matrix_is_tester (which
