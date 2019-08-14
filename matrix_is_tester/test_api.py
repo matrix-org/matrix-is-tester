@@ -42,7 +42,7 @@ launcher = None
 base_url = None
 
 
-def _getOrLaunchIS():
+def _get_or_launch_is():
     global launcher
     global base_url
 
@@ -52,12 +52,12 @@ def _getOrLaunchIS():
     launcher = MatrixIsTestLauncher()
     base_url = launcher.launch()
 
-    atexit.register(destroyIS)
+    atexit.register(destroy_is)
 
     return base_url
 
 
-def destroyIS():
+def destroy_is():
     global launcher
 
     if launcher is not None:
@@ -66,19 +66,19 @@ def destroyIS():
 
 class IsApiTest(unittest.TestCase):
     def setUp(self):
-        self.baseUrl = _getOrLaunchIS()
+        self.baseUrl = _get_or_launch_is()
 
-        self.mailSink = MailSink()
-        self.mailSink.launch()
+        self.mailsink = MailSink()
+        self.mailsink.launch()
 
     def tearDown(self):
-        self.mailSink.tearDown()
+        self.mailsink.tearDown()
 
     def test_v1ping(self):
         resp = requests.get(self.baseUrl + "/_matrix/identity/api/v1")
         self.assertEquals(resp.json(), {})
 
-    def test_requestEmailCode(self):
+    def test_request_email_code(self):
         resp = requests.post(
             self.baseUrl + "/_matrix/identity/api/v1/validate/email/requestToken",
             json={
@@ -91,7 +91,7 @@ class IsApiTest(unittest.TestCase):
         log.msg("Got response %r", body)
         self.assertIn("sid", body)
 
-    def test_submitEmailCode(self):
+    def test_submit_email_code(self):
         resp = requests.post(
             self.baseUrl + "/_matrix/identity/api/v1/validate/email/requestToken",
             json={
@@ -104,7 +104,7 @@ class IsApiTest(unittest.TestCase):
         log.msg("Got response %r", body)
         self.assertIn("sid", body)
 
-        mail = self.mailSink.getMail()
+        mail = self.mailsink.get_mail()
         log.msg("Got email: %r", mail)
         self.assertIn("data", mail)
 

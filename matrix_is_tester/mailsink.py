@@ -30,7 +30,7 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         )
 
 
-def runMailSink(q):
+def run_mail_sink(q):
     MailSinkSmtpServer(("127.0.0.1", 1025), None, q)
     asyncore.loop()
 
@@ -38,10 +38,10 @@ def runMailSink(q):
 class MailSink(object):
     def launch(self):
         self.queue = Queue()
-        self.process = Process(target=runMailSink, args=(self.queue,))
+        self.process = Process(target=run_mail_sink, args=(self.queue,))
         self.process.start()
 
-    def getMail(self):
+    def get_mail(self):
         return self.queue.get()
 
     def tearDown(self):
@@ -51,5 +51,5 @@ class MailSink(object):
 if __name__ == "__main__":
     ms = MailSink()
     ms.launch()
-    print("%r" % (ms.getMail(),))
+    print("%r" % (ms.get_mail(),))
     ms.tearDown()
