@@ -30,124 +30,129 @@ class TermsTest(unittest.TestCase):
 
     def test_getTerms(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
 
         body = api.getTerms()
-        self.assertIn('policies', body)
-        self.assertIn('privacy_policy', body['policies'])
-        self.assertEquals(body['policies']['privacy_policy']['version'], '1.2')
-        self.assertIn('en', body['policies']['privacy_policy'])
-        self.assertIn('name', body['policies']['privacy_policy']['en'])
-        self.assertIn('url', body['policies']['privacy_policy']['en'])
-        self.assertIn('fr', body['policies']['privacy_policy'])
-        self.assertIn('name', body['policies']['privacy_policy']['fr'])
-        self.assertIn('url', body['policies']['privacy_policy']['fr'])
+        self.assertIn("policies", body)
+        self.assertIn("privacy_policy", body["policies"])
+        self.assertEquals(body["policies"]["privacy_policy"]["version"], "1.2")
+        self.assertIn("en", body["policies"]["privacy_policy"])
+        self.assertIn("name", body["policies"]["privacy_policy"]["en"])
+        self.assertIn("url", body["policies"]["privacy_policy"]["en"])
+        self.assertIn("fr", body["policies"]["privacy_policy"])
+        self.assertIn("name", body["policies"]["privacy_policy"]["fr"])
+        self.assertIn("url", body["policies"]["privacy_policy"]["fr"])
 
-        self.assertIn('terms_of_service', body['policies'])
-        self.assertEquals(body['policies']['terms_of_service']['version'], '5.0')
-        self.assertIn('en', body['policies']['terms_of_service'])
-        self.assertIn('name', body['policies']['terms_of_service']['en'])
-        self.assertIn('url', body['policies']['terms_of_service']['en'])
-        self.assertIn('fr', body['policies']['terms_of_service'])
-        self.assertIn('name', body['policies']['terms_of_service']['fr'])
-        self.assertIn('url', body['policies']['terms_of_service']['fr'])
+        self.assertIn("terms_of_service", body["policies"])
+        self.assertEquals(body["policies"]["terms_of_service"]["version"], "5.0")
+        self.assertIn("en", body["policies"]["terms_of_service"])
+        self.assertIn("name", body["policies"]["terms_of_service"]["en"])
+        self.assertIn("url", body["policies"]["terms_of_service"]["en"])
+        self.assertIn("fr", body["policies"]["terms_of_service"])
+        self.assertIn("name", body["policies"]["terms_of_service"]["fr"])
+        self.assertIn("url", body["policies"]["terms_of_service"]["fr"])
 
     def test_agreeToTerms(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
         agreeBody = api.agreeToTerms(
-            [termsBody['policies']['privacy_policy']['en']['url']],
+            [termsBody["policies"]["privacy_policy"]["en"]["url"]]
         )
         self.assertEqual(agreeBody, {})
 
     def test_rejectIfNotAuthed(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
 
         err = api.checkTermsSigned()
-        self.assertEquals(err['errcode'], 'M_UNAUTHORIZED')
+        self.assertEquals(err["errcode"], "M_UNAUTHORIZED")
 
     def test_terms_rejectIfNoneAgreed(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         err = api.checkTermsSigned()
-        self.assertEquals(err['errcode'], 'M_TERMS_NOT_SIGNED')
+        self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
     def test_terms_rejectIfNotAllAgreed(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        api.agreeToTerms([termsBody['policies']['privacy_policy']['en']['url']])
+        api.agreeToTerms([termsBody["policies"]["privacy_policy"]["en"]["url"]])
 
         err = api.checkTermsSigned()
-        self.assertEquals(err['errcode'], 'M_TERMS_NOT_SIGNED')
+        self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
     def test_terms_allowWhenAllAgreed(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        api.agreeToTerms([
-            termsBody['policies']['privacy_policy']['en']['url'],
-            termsBody['policies']['terms_of_service']['en']['url'],
-        ])
+        api.agreeToTerms(
+            [
+                termsBody["policies"]["privacy_policy"]["en"]["url"],
+                termsBody["policies"]["terms_of_service"]["en"]["url"],
+            ]
+        )
 
         err = api.checkTermsSigned()
         self.assertIsNone(err)
 
     def test_terms_allowMixedLangs(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        api.agreeToTerms([
-            termsBody['policies']['privacy_policy']['en']['url'],
-            termsBody['policies']['terms_of_service']['fr']['url'],
-        ])
+        api.agreeToTerms(
+            [
+                termsBody["policies"]["privacy_policy"]["en"]["url"],
+                termsBody["policies"]["terms_of_service"]["fr"]["url"],
+            ]
+        )
 
         err = api.checkTermsSigned()
         self.assertIsNone(err)
 
     def test_terms_allowInSeparateCalls(self):
         baseUrl = getOrLaunchIS(True)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        api.agreeToTerms([termsBody['policies']['privacy_policy']['en']['url']])
-        api.agreeToTerms([termsBody['policies']['terms_of_service']['en']['url']])
+        api.agreeToTerms([termsBody["policies"]["privacy_policy"]["en"]["url"]])
+        api.agreeToTerms([termsBody["policies"]["terms_of_service"]["en"]["url"]])
 
         err = api.checkTermsSigned()
         self.assertIsNone(err)
 
     def test_terms_noTerms(self):
         baseUrl = getOrLaunchIS(False)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        self.assertEquals(termsBody['policies'], {})
+        self.assertEquals(termsBody["policies"], {})
 
     def test_terms_allowIfNoTerms(self):
         baseUrl = getOrLaunchIS(False)
-        api = IsApi(baseUrl, 'v2', None)
+        api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
         err = api.checkTermsSigned()
         self.assertIsNone(err)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from twisted.python import log
+
     log.startLogging(sys.stdout)
     unittest.main()

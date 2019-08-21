@@ -30,16 +30,17 @@ class AccountTest(unittest.TestCase):
 
     def test_account(self):
         baseUrl = getOrLaunchIS(False)
-        api = IsApi(baseUrl, 'v2', None)
-        api.makeAccount(self.fakeHsAddr, tokenForUser('@jimmy_account_test:fake.test'))
+        api = IsApi(baseUrl, "v2", None)
+        api.makeAccount(self.fakeHsAddr, tokenForUser("@jimmy_account_test:fake.test"))
 
         body = api.account()
 
-        self.assertEqual(body['user_id'], '@jimmy_account_test:fake.test')
+        self.assertEqual(body["user_id"], "@jimmy_account_test:fake.test")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from twisted.python import log
+
     log.startLogging(sys.stdout)
     unittest.main()

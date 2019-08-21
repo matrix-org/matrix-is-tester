@@ -36,7 +36,7 @@ launchers = {}
 def getOrLaunchIS(withTerms=False):
     global launchers
 
-    key = 'withTerms' if withTerms else 'noTerms'
+    key = "withTerms" if withTerms else "noTerms"
 
     if key not in launchers:
         if not launchers:

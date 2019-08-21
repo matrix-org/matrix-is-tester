@@ -31,10 +31,10 @@ class IsApi(object):
         self.headers = None
 
         self.version = version
-        if version == 'v1':
-            self.apiRoot = baseUrl + '/_matrix/identity/api/v1'
-        elif version == 'v2':
-            self.apiRoot = baseUrl + '/_matrix/identity/v2'
+        if version == "v1":
+            self.apiRoot = baseUrl + "/_matrix/identity/api/v1"
+        elif version == "v2":
+            self.apiRoot = baseUrl + "/_matrix/identity/v2"
         else:
             raise Exception("Invalid version: %s" % (version,))
 
@@ -43,22 +43,22 @@ class IsApi(object):
     # Uses the /register API to create an account. This account will
     # be used for all subsequent API calls that requrie auth.
     def makeAccount(self, hsAddr, openidToken=None):
-        if self.version != 'v2':
+        if self.version != "v2":
             raise Exception("Only v2 supports authentication")
 
         if openidToken is None:
             openidToken = tokenForRandomUser()
 
-        body = self.register(':'.join([str(x) for x in hsAddr]), openidToken)
-        self.headers = {'Authorization': 'Bearer %s' % (body['access_token'],)}
+        body = self.register(":".join([str(x) for x in hsAddr]), openidToken)
+        self.headers = {"Authorization": "Bearer %s" % (body["access_token"],)}
 
     def getTokenFromMail(self):
         mail = self.mailSink.get_mail()
 
         log.msg("Got email: %r", mail)
-        if 'data' not in mail:
+        if "data" not in mail:
             raise Exception("Mail has no 'data'")
-        matches = re.match(r"<<<(.*)>>>", mail['data'])
+        matches = re.match(r"<<<(.*)>>>", mail["data"])
         if not matches.group(1):
             raise Exception("Failed to match token from mail")
 
@@ -70,11 +70,11 @@ class IsApi(object):
 
     def requestEmailCode(self, address, clientSecret, sendAttempt):
         resp = requests.post(
-            self.apiRoot + '/validate/email/requestToken',
+            self.apiRoot + "/validate/email/requestToken",
             json={
-                'client_secret': clientSecret,
-                'email': address,
-                'send_attempt': sendAttempt,
+                "client_secret": clientSecret,
+                "email": address,
+                "send_attempt": sendAttempt,
             },
             headers=self.headers,
         )
@@ -82,12 +82,8 @@ class IsApi(object):
 
     def submitEmailTokenViaGet(self, sid, clientSecret, token):
         resp = requests.get(
-            self.apiRoot + '/validate/email/submitToken',
-            params={
-                'client_secret': clientSecret,
-                'sid': sid,
-                'token': token,
-            },
+            self.apiRoot + "/validate/email/submitToken",
+            params={"client_secret": clientSecret, "sid": sid, "token": token},
             headers=self.headers,
         )
         return resp.content
@@ -98,144 +94,101 @@ class IsApi(object):
 
         token = self.getTokenFromMail()
 
-        sid = reqResponse['sid']
+        sid = reqResponse["sid"]
         resp = requests.post(
-            self.apiRoot + '/validate/email/submitToken',
-            json={
-                'client_secret': clientSecret,
-                'sid': sid,
-                'token': token,
-            },
+            self.apiRoot + "/validate/email/submitToken",
+            json={"client_secret": clientSecret, "sid": sid, "token": token},
             headers=self.headers,
         )
         body = resp.json()
         log.msg("submitToken returned %r", body)
-        if not body['success']:
+        if not body["success"]:
             raise Exception("Submit token failed")
-        return {'sid': sid, 'client_secret': clientSecret}
+        return {"sid": sid, "client_secret": clientSecret}
 
     def bindEmail(self, sid, clientSecret, mxid):
         resp = requests.post(
-            self.apiRoot + '/3pid/bind',
-            json={
-                'client_secret': clientSecret,
-                'sid': sid,
-                'mxid': mxid,
-            },
+            self.apiRoot + "/3pid/bind",
+            json={"client_secret": clientSecret, "sid": sid, "mxid": mxid},
             headers=self.headers,
         )
         return resp.json()
 
     def lookupv1(self, medium, address):
         resp = requests.get(
-            self.apiRoot + '/lookup',
-            params={
-                'medium': medium,
-                'address': address,
-            },
+            self.apiRoot + "/lookup",
+            params={"medium": medium, "address": address},
             headers=self.headers,
         )
         return resp.json()
 
     def bulkLookup(self, threepids):
         resp = requests.post(
-            self.apiRoot + '/bulk_lookup',
-            json={
-                'threepids': threepids,
-            },
+            self.apiRoot + "/bulk_lookup",
+            json={"threepids": threepids},
             headers=self.headers,
         )
         return resp.json()
 
     def getValidatedThreepid(self, sid, clientSecret):
         resp = requests.get(
-            self.apiRoot + '/3pid/getValidated3pid',
-            params={
-                'sid': sid,
-                'client_secret': clientSecret,
-            },
+            self.apiRoot + "/3pid/getValidated3pid",
+            params={"sid": sid, "client_secret": clientSecret},
             headers=self.headers,
         )
         return resp.json()
 
     def storeInvite(self, params):
         resp = requests.post(
-            self.apiRoot + '/store-invite',
-            json=params,
-            headers=self.headers,
+            self.apiRoot + "/store-invite", json=params, headers=self.headers
         )
         return resp.json()
 
     def pubkeyIsValid(self, url, pubkey):
-        resp = requests.get(
-            url,
-            params={
-                'public_key': pubkey,
-            },
-        )
+        resp = requests.get(url, params={"public_key": pubkey})
         return resp.json()
 
     def getTerms(self):
-        resp = requests.get(
-            self.apiRoot + '/terms',
-        )
+        resp = requests.get(self.apiRoot + "/terms")
         return resp.json()
 
     def agreeToTerms(self, userAccepts):
         resp = requests.post(
-            self.apiRoot + '/terms',
-            json={
-                'user_accepts': userAccepts,
-            },
+            self.apiRoot + "/terms",
+            json={"user_accepts": userAccepts},
             headers=self.headers,
         )
         return resp.json()
 
     def register(self, matrixServerName, accessToken):
         resp = requests.post(
-            self.apiRoot + '/account/register',
-            json={
-                'matrix_server_name': matrixServerName,
-                'access_token': accessToken,
-            },
+            self.apiRoot + "/account/register",
+            json={"matrix_server_name": matrixServerName, "access_token": accessToken},
         )
         return resp.json()
 
     def account(self):
-        resp = requests.get(
-            self.apiRoot + '/account',
-            headers=self.headers,
-        )
+        resp = requests.get(self.apiRoot + "/account", headers=self.headers)
         return resp.json()
 
     def logout(self):
-        resp = requests.post(
-            self.apiRoot + '/account/logout',
-            headers=self.headers,
-        )
+        resp = requests.post(self.apiRoot + "/account/logout", headers=self.headers)
         return resp.json()
 
     def hash_details(self):
-        resp = requests.get(
-            self.apiRoot + '/hash_details',
-            headers=self.headers,
-        )
+        resp = requests.get(self.apiRoot + "/hash_details", headers=self.headers)
         return resp.json()
 
     def hashed_lookup(self, addresses, alg, pepper):
         resp = requests.post(
-            self.apiRoot + '/lookup',
-            json={
-                'addresses': addresses,
-                'algorithm': alg,
-                'pepper': pepper,
-            },
+            self.apiRoot + "/lookup",
+            json={"addresses": addresses, "algorithm": alg, "pepper": pepper},
             headers=self.headers,
         )
         return resp.json()
 
     def checkTermsSigned(self):
         body = self.hash_details()
-        if 'algorithms' in body:
+        if "algorithms" in body:
             return None
         return body
