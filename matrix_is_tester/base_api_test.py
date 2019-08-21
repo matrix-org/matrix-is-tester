@@ -27,7 +27,7 @@ from twisted.python import log
 
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
-from .mailsink import getSharedMailSink
+from .mailsink import get_shared_mailsink
 
 
 # Not a test case itself, but can be subclassed to test APIs common
@@ -36,7 +36,7 @@ class BaseApiTest():
     def setUp(self):
         self.baseUrl = getOrLaunchIS()
 
-        self.mailSink = getSharedMailSink()
+        self.mailSink = get_shared_mailsink()
 
         self.api = IsApi(self.baseUrl, self.API_VERSION, self.mailSink)
 
@@ -50,7 +50,7 @@ class BaseApiTest():
         body = self.api.requestEmailCode('fakeemail1@nowhere.test', 'sekrit', 1)
         log.msg("Got response %r", body)
         self.assertIn('sid', body)
-        self.mailSink.getMail()
+        self.mailSink.get_mail()
 
     def test_rejectInvalidEmail(self):
         body = self.api.requestEmailCode('fakeemail1@nowhere.test@elsewhere.test', 'sekrit', 1)
@@ -73,24 +73,6 @@ class BaseApiTest():
         self.assertEquals(body['medium'], 'email')
         self.assertEquals(body['address'], 'steve@nowhere.test')
 
-    def test_bind_and_lookup(self):
-        params = self.api.requestAndSubmitEmailCode('fakeemail3@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
-
-        self.assertEquals(body['medium'], 'email')
-        self.assertEquals(body['address'], "fakeemail3@nowhere.test")
-        self.assertEquals(body['mxid'], "@some_mxid:fake.test")
-
-        body2 = self.api.lookup('email', "fakeemail3@nowhere.test")
-
-        self.assertEquals(body2['medium'], 'email')
-        self.assertEquals(body2['address'], 'fakeemail3@nowhere.test')
-        self.assertEquals(body2['mxid'], '@some_mxid:fake.test')
-
-        self.assertEquals(body['ts'], body2['ts'])
-        self.assertEquals(body['not_before'], body2['not_before'])
-        self.assertEquals(body['not_after'], body2['not_after'])
-
     def test_bind_toBadMxid(self):
         raise unittest.SkipTest("sydent allows this currently")
         params = self.api.requestAndSubmitEmailCode('perfectly_valid_email@nowhere.test')
@@ -100,26 +82,9 @@ class BaseApiTest():
     def test_unverified_bind(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
         # get the mail so we don't leave it in the queue
-        self.mailSink.getMail()
+        self.mailSink.get_mail()
         body = self.api.bindEmail(reqCodeBody['sid'], 'sekrit', '@thing1:fake.test')
         self.assertEquals(body['errcode'], 'M_SESSION_NOT_VALIDATED')
-
-    def test_bulk_lookup(self):
-        params = self.api.requestAndSubmitEmailCode('thing1@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing1:fake.test')
-
-        params = self.api.requestAndSubmitEmailCode('thing2@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing2:fake.test')
-
-        body = self.api.bulkLookup([
-            ('email', 'thing1@nowhere.test'),
-            ('email', 'thing2@nowhere.test'),
-            ('email', 'thing3@nowhere.test'),
-        ])
-
-        self.assertIn(['email', 'thing1@nowhere.test', '@thing1:fake.test'], body['threepids'])
-        self.assertIn(['email', 'thing2@nowhere.test', '@thing2:fake.test'], body['threepids'])
-        self.assertEquals(len(body['threepids']), 2)
 
     def test_getValidatedThreepid(self):
         params = self.api.requestAndSubmitEmailCode('fakeemail4@nowhere.test')
@@ -132,7 +97,7 @@ class BaseApiTest():
     def test_getValidatedThreepid_notValidated(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
         # get the mail, otherwise the next test will get it instead of the one it was expecting
-        self.mailSink.getMail()
+        self.mailSink.get_mail()
 
         getValBody = self.api.getValidatedThreepid(reqCodeBody['sid'], 'sekrit')
         self.assertEquals(getValBody['errcode'], 'M_SESSION_NOT_VALIDATED')
@@ -158,7 +123,7 @@ class BaseApiTest():
             isValidBody = self.api.pubkeyIsValid(k['key_validity_url'], k['public_key'])
             self.assertTrue(isValidBody['valid'])
 
-        mail = self.mailSink.getMail()
+        mail = self.mailSink.get_mail()
         log.msg("Got email (invite): %r", mail)
         mailObject = json.loads(mail['data'])
         self.assertEquals(mailObject['token'], body['token'])

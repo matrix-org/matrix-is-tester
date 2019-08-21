@@ -52,7 +52,7 @@ class IsApi(object):
         self.headers = {'Authorization': 'Bearer %s' % (body['access_token'],)}
 
     def getTokenFromMail(self):
-        mail = self.mailSink.getMail()
+        mail = self.mailSink.get_mail()
 
         log.msg("Got email: %r", mail)
         if 'data' not in mail:
@@ -125,7 +125,7 @@ class IsApi(object):
         )
         return resp.json()
 
-    def lookup(self, medium, address):
+    def lookupv1(self, medium, address):
         resp = requests.get(
             self.apiRoot + '/lookup',
             params={
@@ -213,3 +213,28 @@ class IsApi(object):
             headers=self.headers,
         )
         return resp.json()
+
+    def hash_details(self):
+        resp = requests.get(
+            self.apiRoot + '/hash_details',
+            headers=self.headers,
+        )
+        return resp.json()
+
+    def hashed_lookup(self, addresses, alg, pepper):
+        resp = requests.post(
+            self.apiRoot + '/lookup',
+            json={
+                'addresses': addresses,
+                'algorithm': alg,
+                'pepper': pepper,
+            },
+            headers=self.headers,
+        )
+        return resp.json()
+
+    def checkTermsSigned(self):
+        body = self.hash_details()
+        if 'algorithms' in body:
+            return None
+        return body

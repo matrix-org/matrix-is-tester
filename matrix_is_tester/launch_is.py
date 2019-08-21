@@ -19,12 +19,12 @@
 import atexit
 
 try:
-    from syditest_subject.launcher import SyditestLauncher
+    from matrix_is_test.launcher import MatrixIsTestLauncher
 except ImportError:
     print("ERROR: Couldn't import launcher")
     print(
-        "syditest needs an identity server to test: make sure, "
-        "'syditest_subject.launcher.SyditestLauncher' is in "
+        "matrix_is_tester needs an identity server to test: make sure, "
+        "'matrix_is_test.launcher.MatrixIsTestLauncher' is in "
         "sys.path"
     )
     
@@ -41,10 +41,10 @@ def getOrLaunchIS(withTerms=False):
         if not launchers:
             atexit.register(destroyAll)
 
-        launchers[key] = SyditestLauncher(withTerms)
+        launchers[key] = MatrixIsTestLauncher(withTerms)
         launchers[key].launch()
 
-    return launchers[key].getBaseUrl()
+    return launchers[key].get_base_url()
 
 def destroyAll():
     global launchers

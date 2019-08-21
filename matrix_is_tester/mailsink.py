@@ -14,26 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import smtpd
 import asyncore
 import atexit
-
+import smtpd
 from multiprocessing import Process, Queue
 from Queue import Empty as QueueEmpty
 
 sharedInstance = None
 
-def getSharedMailSink():
+def get_shared_mailsink():
     global sharedInstance
     if sharedInstance is None:
         sharedInstance = MailSink()
         sharedInstance.launch()
-        atexit.register(destroyShared)
+        atexit.register(destroy_shared)
     return sharedInstance
 
-def destroyShared():
+def destroy_shared():
     global sharedInstance
     sharedInstance.tearDown()
+
 
 class MailSinkSmtpServer(smtpd.SMTPServer):
     def __init__(self, localaddr, remoteaddr, q):
@@ -41,31 +41,30 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         self.queue = q
 
     def process_message(self, peer, mailfrom, rctpto, data):
-        self.queue.put({
-            'peer': peer,
-            'mailfrom': mailfrom,
-            'rctpto': rctpto,
-            'data': data,
-        })
+        self.queue.put(
+            {"peer": peer, "mailfrom": mailfrom, "rctpto": rctpto, "data": data}
+        )
 
-def runMailSink(q):
-    smtpServer = MailSinkSmtpServer(('127.0.0.1', 9925), None, q)
+def run_mail_sink(q):
+    MailSinkSmtpServer(("127.0.0.1", 9925), None, q)
     asyncore.loop()
+
 
 class MailSink(object):
     def launch(self):
         self.queue = Queue()
-        self.process = Process(target=runMailSink, args=(self.queue,))
+        self.process = Process(target=run_mail_sink, args=(self.queue,))
         self.process.start()
 
-    def getMail(self):
-        return self.queue.get(timeout=5.0)
+    def get_mail(self):
+        return self.queue.get(timeout=0.5)
 
     def tearDown(self):
         self.process.terminate()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     ms = MailSink()
     ms.launch()
-    print "%r" % (ms.getMail(),)
+    print("%r" % (ms.get_mail(),))
     ms.tearDown()

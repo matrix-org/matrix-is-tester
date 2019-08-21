@@ -28,8 +28,25 @@ class V2Test(BaseApiTest, unittest.TestCase):
 
     def setUp(self):
         super(V2Test, self).setUp()
+
         self.fakeHs = getSharedFakeHs()
         self.api.makeAccount(self.fakeHs.getAddr())
+
+    def test_bind_and_lookup(self):
+        params = self.api.requestAndSubmitEmailCode('fakeemail3@nowhere.test')
+        body = self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
+
+        self.assertEquals(body['medium'], 'email')
+        self.assertEquals(body['address'], "fakeemail3@nowhere.test")
+        self.assertEquals(body['mxid'], "@some_mxid:fake.test")
+
+        hash_details = self.api.hash_details()
+
+        lookupStr = '%s %s' % ('fakeemail3@nowhere.test', 'email')
+        body2 = self.api.hashed_lookup([lookupStr], 'none', hash_details['lookup_pepper'])
+
+        self.assertIn(lookupStr, body2['mappings'])
+        self.assertEquals(body2['mappings'][lookupStr], '@some_mxid:fake.test')
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)

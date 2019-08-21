@@ -65,16 +65,16 @@ class TermsTest(unittest.TestCase):
         baseUrl = getOrLaunchIS(True)
         api = IsApi(baseUrl, 'v2', None)
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body['errcode'], 'M_UNAUTHORIZED')
+        err = api.checkTermsSigned()
+        self.assertEquals(err['errcode'], 'M_UNAUTHORIZED')
 
     def test_terms_rejectIfNoneAgreed(self):
         baseUrl = getOrLaunchIS(True)
         api = IsApi(baseUrl, 'v2', None)
         api.makeAccount(self.fakeHsAddr)
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body['errcode'], 'M_TERMS_NOT_SIGNED')
+        err = api.checkTermsSigned()
+        self.assertEquals(err['errcode'], 'M_TERMS_NOT_SIGNED')
 
     def test_terms_rejectIfNotAllAgreed(self):
         baseUrl = getOrLaunchIS(True)
@@ -84,8 +84,8 @@ class TermsTest(unittest.TestCase):
         termsBody = api.getTerms()
         api.agreeToTerms([termsBody['policies']['privacy_policy']['en']['url']])
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body['errcode'], 'M_TERMS_NOT_SIGNED')
+        err = api.checkTermsSigned()
+        self.assertEquals(err['errcode'], 'M_TERMS_NOT_SIGNED')
 
     def test_terms_allowWhenAllAgreed(self):
         baseUrl = getOrLaunchIS(True)
@@ -98,8 +98,8 @@ class TermsTest(unittest.TestCase):
             termsBody['policies']['terms_of_service']['en']['url'],
         ])
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body, {})
+        err = api.checkTermsSigned()
+        self.assertIsNone(err)
 
     def test_terms_allowMixedLangs(self):
         baseUrl = getOrLaunchIS(True)
@@ -112,8 +112,8 @@ class TermsTest(unittest.TestCase):
             termsBody['policies']['terms_of_service']['fr']['url'],
         ])
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body, {})
+        err = api.checkTermsSigned()
+        self.assertIsNone(err)
 
     def test_terms_allowInSeparateCalls(self):
         baseUrl = getOrLaunchIS(True)
@@ -124,8 +124,8 @@ class TermsTest(unittest.TestCase):
         api.agreeToTerms([termsBody['policies']['privacy_policy']['en']['url']])
         api.agreeToTerms([termsBody['policies']['terms_of_service']['en']['url']])
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body, {})
+        err = api.checkTermsSigned()
+        self.assertIsNone(err)
 
     def test_terms_noTerms(self):
         baseUrl = getOrLaunchIS(False)
@@ -140,8 +140,8 @@ class TermsTest(unittest.TestCase):
         api = IsApi(baseUrl, 'v2', None)
         api.makeAccount(self.fakeHsAddr)
 
-        body = api.lookup('email', 'bob@example.com')
-        self.assertEquals(body, {})
+        err = api.checkTermsSigned()
+        self.assertIsNone(err)
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)
