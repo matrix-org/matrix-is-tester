@@ -18,9 +18,9 @@
 
 import unittest
 
+from .fakehs import getSharedFakeHs, tokenForUser
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
-from .fakehs import getSharedFakeHs, tokenForUser
 
 
 class AccountTest(unittest.TestCase):

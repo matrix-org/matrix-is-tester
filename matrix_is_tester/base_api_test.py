@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 import json
 import random
+import unittest
 
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you

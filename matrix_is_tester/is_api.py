@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import requests
 import random
-import string
 import re
+import string
 
+import requests
 from twisted.python import log
 
 from .fakehs import tokenForRandomUser

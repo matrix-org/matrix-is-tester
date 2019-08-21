@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import BaseHTTPServer
-
-import os
-import json
-import ssl
-import random
 import atexit
-import urlparse
 import base64
+import BaseHTTPServer
+import json
+import os
+import random
+import ssl
+import urlparse
 from multiprocessing import Process
-
 
 random.seed(1)
 
