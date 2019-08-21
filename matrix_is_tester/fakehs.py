@@ -36,19 +36,23 @@ def tokenForRandomUser():
     userId = '@user%d:localhost:4490' % (num,)
     return 'user:%s' % (base64.b64encode(userId),)
 
+
 def tokenForUser(userId):
     return 'user:%s' % (base64.b64encode(userId),)
 
+
 def getSharedFakeHs():
     global sharedFakeHs
-    if sharedFakeHs == None:
+    if sharedFakeHs is None:
         sharedFakeHs = FakeHomeserver()
         sharedFakeHs.launch()
         atexit.register(destroyShared)
     return sharedFakeHs
 
+
 def destroyShared():
     sharedFakeHs.tearDown()
+
 
 class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -89,12 +93,14 @@ class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # don't print to stdout: it screws up the test output (and we don't really care)
         return
 
+
 def runHttpServer():
     certFile = os.path.join(os.path.dirname(__file__), 'fakehs.pem')
 
     httpd = BaseHTTPServer.HTTPServer(('localhost', 4490), FakeHomeserverRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=certFile, server_side=True)
     httpd.serve_forever()
+
 
 class FakeHomeserver(object):
     def launch(self):
@@ -106,6 +112,7 @@ class FakeHomeserver(object):
 
     def tearDown(self):
         self.process.terminate()
+
 
 if __name__ == '__main__':
     fakehs = FakeHomeserver()

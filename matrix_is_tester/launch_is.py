@@ -27,10 +27,11 @@ except ImportError:
         "'matrix_is_test.launcher.MatrixIsTestLauncher' is in "
         "sys.path"
     )
-    
+
     raise
 
 launchers = {}
+
 
 def getOrLaunchIS(withTerms=False):
     global launchers
@@ -45,6 +46,7 @@ def getOrLaunchIS(withTerms=False):
         launchers[key].launch()
 
     return launchers[key].get_base_url()
+
 
 def destroyAll():
     global launchers

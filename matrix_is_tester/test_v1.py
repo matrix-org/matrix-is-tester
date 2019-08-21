@@ -18,7 +18,6 @@
 
 import unittest
 
-from .is_api import IsApi
 from .base_api_test import BaseApiTest
 
 
@@ -27,10 +26,14 @@ class V1Test(BaseApiTest, unittest.TestCase):
 
     def test_bulk_lookup(self):
         params = self.api.requestAndSubmitEmailCode('thing1@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing1:fake.test')
+        body = self.api.bindEmail(
+            params['sid'], params['client_secret'], '@thing1:fake.test',
+        )
 
         params = self.api.requestAndSubmitEmailCode('thing2@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@thing2:fake.test')
+        body = self.api.bindEmail(
+            params['sid'], params['client_secret'], '@thing2:fake.test',
+        )
 
         body = self.api.bulkLookup([
             ('email', 'thing1@nowhere.test'),
@@ -38,13 +41,23 @@ class V1Test(BaseApiTest, unittest.TestCase):
             ('email', 'thing3@nowhere.test'),
         ])
 
-        self.assertIn(['email', 'thing1@nowhere.test', '@thing1:fake.test'], body['threepids'])
-        self.assertIn(['email', 'thing2@nowhere.test', '@thing2:fake.test'], body['threepids'])
+        self.assertIn(
+            ['email', 'thing1@nowhere.test', '@thing1:fake.test'],
+            body['threepids'],
+        )
+        self.assertIn(
+            ['email', 'thing2@nowhere.test', '@thing2:fake.test'],
+            body['threepids'],
+        )
         self.assertEquals(len(body['threepids']), 2)
 
     def test_bind_and_lookup(self):
         params = self.api.requestAndSubmitEmailCode('fakeemail3@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
+        body = self.api.bindEmail(
+            params['sid'],
+            params['client_secret'],
+            '@some_mxid:fake.test',
+        )
 
         self.assertEquals(body['medium'], 'email')
         self.assertEquals(body['address'], "fakeemail3@nowhere.test")
@@ -62,5 +75,7 @@ class V1Test(BaseApiTest, unittest.TestCase):
 
 
 if __name__ == '__main__':
+    import sys
+    from twisted.python import log
     log.startLogging(sys.stdout)
     unittest.main()

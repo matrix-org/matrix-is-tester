@@ -37,6 +37,9 @@ class AccountTest(unittest.TestCase):
 
         self.assertEqual(body['user_id'], '@jimmy_account_test:fake.test')
 
+
 if __name__ == '__main__':
+    import sys
+    from twisted.python import log
     log.startLogging(sys.stdout)
     unittest.main()

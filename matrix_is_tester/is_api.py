@@ -25,27 +25,28 @@ from twisted.python import log
 
 from .fakehs import tokenForRandomUser
 
+
 class IsApi(object):
     def __init__(self, baseUrl, version, mailSink):
         self.headers = None
 
         self.version = version
         if version == 'v1':
-            self.apiRoot = baseUrl + '/_matrix/identity/api/v1';
+            self.apiRoot = baseUrl + '/_matrix/identity/api/v1'
         elif version == 'v2':
-            self.apiRoot = baseUrl + '/_matrix/identity/v2';
+            self.apiRoot = baseUrl + '/_matrix/identity/v2'
         else:
             raise Exception("Invalid version: %s" % (version,))
 
         self.mailSink = mailSink
 
-    # Uses the /register API to create an account. This account will be used for all subsequent
-    # API calls that requrie auth.
+    # Uses the /register API to create an account. This account will
+    # be used for all subsequent API calls that requrie auth.
     def makeAccount(self, hsAddr, openidToken=None):
         if self.version != 'v2':
             raise Exception("Only v2 supports authentication")
 
-        if openidToken == None:
+        if openidToken is None:
             openidToken = tokenForRandomUser()
 
         body = self.register(':'.join([str(x) for x in hsAddr]), openidToken)
@@ -145,7 +146,7 @@ class IsApi(object):
             headers=self.headers,
         )
         return resp.json()
-        
+
     def getValidatedThreepid(self, sid, clientSecret):
         resp = requests.get(
             self.apiRoot + '/3pid/getValidated3pid',

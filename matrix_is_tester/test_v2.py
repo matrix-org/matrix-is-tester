@@ -18,7 +18,6 @@
 
 import unittest
 
-from .is_api import IsApi
 from .base_api_test import BaseApiTest
 from .fakehs import getSharedFakeHs
 
@@ -34,7 +33,11 @@ class V2Test(BaseApiTest, unittest.TestCase):
 
     def test_bind_and_lookup(self):
         params = self.api.requestAndSubmitEmailCode('fakeemail3@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], '@some_mxid:fake.test')
+        body = self.api.bindEmail(
+            params['sid'],
+            params['client_secret'],
+            '@some_mxid:fake.test',
+        )
 
         self.assertEquals(body['medium'], 'email')
         self.assertEquals(body['address'], "fakeemail3@nowhere.test")
@@ -48,6 +51,9 @@ class V2Test(BaseApiTest, unittest.TestCase):
         self.assertIn(lookupStr, body2['mappings'])
         self.assertEquals(body2['mappings'][lookupStr], '@some_mxid:fake.test')
 
+
 if __name__ == '__main__':
+    import sys
+    from twisted.python import log
     log.startLogging(sys.stdout)
     unittest.main()

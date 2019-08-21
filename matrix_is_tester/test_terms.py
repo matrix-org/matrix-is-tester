@@ -31,7 +31,7 @@ class TermsTest(unittest.TestCase):
     def test_getTerms(self):
         baseUrl = getOrLaunchIS(True)
         api = IsApi(baseUrl, 'v2', None)
-        
+
         body = api.getTerms()
         self.assertIn('policies', body)
         self.assertIn('privacy_policy', body['policies'])
@@ -58,7 +58,9 @@ class TermsTest(unittest.TestCase):
         api.makeAccount(self.fakeHsAddr)
 
         termsBody = api.getTerms()
-        agreeBody = api.agreeToTerms([termsBody['policies']['privacy_policy']['en']['url']])
+        agreeBody = api.agreeToTerms(
+            [termsBody['policies']['privacy_policy']['en']['url']],
+        )
         self.assertEqual(agreeBody, {})
 
     def test_rejectIfNotAuthed(self):
@@ -143,6 +145,9 @@ class TermsTest(unittest.TestCase):
         err = api.checkTermsSigned()
         self.assertIsNone(err)
 
+
 if __name__ == '__main__':
+    import sys
+    from twisted.python import log
     log.startLogging(sys.stdout)
     unittest.main()

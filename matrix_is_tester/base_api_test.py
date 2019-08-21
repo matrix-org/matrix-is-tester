@@ -53,7 +53,9 @@ class BaseApiTest():
         self.mailSink.get_mail()
 
     def test_rejectInvalidEmail(self):
-        body = self.api.requestEmailCode('fakeemail1@nowhere.test@elsewhere.test', 'sekrit', 1)
+        body = self.api.requestEmailCode(
+            'fakeemail1@nowhere.test@elsewhere.test', 'sekrit', 1,
+        )
         self.assertEquals(body['errcode'], 'M_INVALID_EMAIL')
 
     def test_submitEmailCode(self):
@@ -76,7 +78,9 @@ class BaseApiTest():
     def test_bind_toBadMxid(self):
         raise unittest.SkipTest("sydent allows this currently")
         params = self.api.requestAndSubmitEmailCode('perfectly_valid_email@nowhere.test')
-        body = self.api.bindEmail(params['sid'], params['client_secret'], 'not a valid mxid')
+        body = self.api.bindEmail(
+            params['sid'], params['client_secret'], 'not a valid mxid',
+        )
         self.assertEquals(body['errcode'], 'M_INVALID_PARAM')
 
     def test_unverified_bind(self):
@@ -96,7 +100,8 @@ class BaseApiTest():
 
     def test_getValidatedThreepid_notValidated(self):
         reqCodeBody = self.api.requestEmailCode('fakeemail5@nowhere.test', 'sekrit', 1)
-        # get the mail, otherwise the next test will get it instead of the one it was expecting
+        # get the mail, otherwise the next test will get it
+        # instead of the one it was expecting
         self.mailSink.get_mail()
 
         getValBody = self.api.getValidatedThreepid(reqCodeBody['sid'], 'sekrit')

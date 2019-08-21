@@ -20,7 +20,7 @@ import unittest
 
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
-from .fakehs import getSharedFakeHs, tokenForUser
+from .fakehs import getSharedFakeHs
 
 
 class LogoutTest(unittest.TestCase):
@@ -41,6 +41,9 @@ class LogoutTest(unittest.TestCase):
         body = api.account()
         self.assertEqual(body['errcode'], 'M_UNAUTHORIZED')
 
+
 if __name__ == '__main__':
+    import sys
+    from twisted.python import log
     log.startLogging(sys.stdout)
     unittest.main()
