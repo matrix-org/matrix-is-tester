@@ -20,7 +20,7 @@ import unittest
 
 from .fakehs import getSharedFakeHs, tokenForUser
 from .is_api import IsApi
-from .launch_is import getOrLaunchIS
+from .launch_is import get_or_launch_is
 
 
 class AccountTest(unittest.TestCase):
@@ -29,7 +29,7 @@ class AccountTest(unittest.TestCase):
         self.fakeHsAddr = self.fakeHs.getAddr()
 
     def test_account(self):
-        baseUrl = getOrLaunchIS(False)
+        baseUrl = get_or_launch_is(False)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr, tokenForUser("@jimmy_account_test:fake.test"))
 

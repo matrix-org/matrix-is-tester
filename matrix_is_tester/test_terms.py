@@ -20,7 +20,7 @@ import unittest
 
 from .fakehs import getSharedFakeHs
 from .is_api import IsApi
-from .launch_is import getOrLaunchIS
+from .launch_is import get_or_launch_is
 
 
 class TermsTest(unittest.TestCase):
@@ -29,7 +29,7 @@ class TermsTest(unittest.TestCase):
         self.fakeHsAddr = self.fakeHs.getAddr()
 
     def test_getTerms(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
 
         body = api.getTerms()
@@ -53,7 +53,7 @@ class TermsTest(unittest.TestCase):
         self.assertIn("url", body["policies"]["terms_of_service"]["fr"])
 
     def test_agreeToTerms(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -64,14 +64,14 @@ class TermsTest(unittest.TestCase):
         self.assertEqual(agreeBody, {})
 
     def test_rejectIfNotAuthed(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
 
         err = api.checkTermsSigned()
         self.assertEquals(err["errcode"], "M_UNAUTHORIZED")
 
     def test_terms_rejectIfNoneAgreed(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -79,7 +79,7 @@ class TermsTest(unittest.TestCase):
         self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
     def test_terms_rejectIfNotAllAgreed(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -90,7 +90,7 @@ class TermsTest(unittest.TestCase):
         self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
     def test_terms_allowWhenAllAgreed(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -106,7 +106,7 @@ class TermsTest(unittest.TestCase):
         self.assertIsNone(err)
 
     def test_terms_allowMixedLangs(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -122,7 +122,7 @@ class TermsTest(unittest.TestCase):
         self.assertIsNone(err)
 
     def test_terms_allowInSeparateCalls(self):
-        baseUrl = getOrLaunchIS(True)
+        baseUrl = get_or_launch_is(True)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -134,7 +134,7 @@ class TermsTest(unittest.TestCase):
         self.assertIsNone(err)
 
     def test_terms_noTerms(self):
-        baseUrl = getOrLaunchIS(False)
+        baseUrl = get_or_launch_is(False)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
@@ -142,7 +142,7 @@ class TermsTest(unittest.TestCase):
         self.assertEquals(termsBody["policies"], {})
 
     def test_terms_allowIfNoTerms(self):
-        baseUrl = getOrLaunchIS(False)
+        baseUrl = get_or_launch_is(False)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 

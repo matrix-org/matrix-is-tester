@@ -20,7 +20,7 @@ import unittest
 
 from .fakehs import getSharedFakeHs, tokenForUser
 from .is_api import IsApi
-from .launch_is import getOrLaunchIS
+from .launch_is import get_or_launch_is
 from .mailsink import get_shared_mailsink
 
 
@@ -31,7 +31,7 @@ class AccountTest(unittest.TestCase):
         self.mailSink = get_shared_mailsink()
 
     def test_bind_notYourMxid(self):
-        baseUrl = getOrLaunchIS(False)
+        baseUrl = get_or_launch_is(False)
         api = IsApi(baseUrl, "v2", self.mailSink)
         api.makeAccount(self.fakeHsAddr, tokenForUser("@bob:fake.test"))
 

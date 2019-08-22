@@ -33,7 +33,7 @@ except ImportError:
 launchers = {}
 
 
-def getOrLaunchIS(withTerms=False):
+def get_or_launch_is(withTerms=False):
     global launchers
 
     key = "withTerms" if withTerms else "noTerms"
