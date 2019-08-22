@@ -18,7 +18,6 @@
 
 import json
 import random
-import unittest
 
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you
