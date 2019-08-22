@@ -79,7 +79,9 @@ class BaseApiTest:
         reqCodeBody = self.api.requestEmailCode("fakeemail5@nowhere.test", "sekrit", 1)
         # get the mail so we don't leave it in the queue
         self.mailSink.get_mail()
-        body = self.api.bindEmail(reqCodeBody["sid"], "sekrit", "@commonapitests:fake.test")
+        body = self.api.bindEmail(
+            reqCodeBody["sid"], "sekrit", "@commonapitests:fake.test"
+        )
         self.assertEquals(body["errcode"], "M_SESSION_NOT_VALIDATED")
 
     def test_getValidatedThreepid(self):

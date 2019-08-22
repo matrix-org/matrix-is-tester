@@ -32,13 +32,14 @@ class AccountTest(unittest.TestCase):
 
     def test_bind_notYourMxid(self):
         baseUrl = getOrLaunchIS(False)
-        api = IsApi(baseUrl, 'v2', self.mailSink)
-        api.makeAccount(self.fakeHsAddr, tokenForUser('@bob:fake.test'))
+        api = IsApi(baseUrl, "v2", self.mailSink)
+        api.makeAccount(self.fakeHsAddr, tokenForUser("@bob:fake.test"))
 
-        params = api.requestAndSubmitEmailCode('perfectly_valid_email@nowhere.test')
-        body = api.bindEmail(params['sid'], params['client_secret'], '@alice:fake.test')
-        self.assertEquals(body['errcode'], 'M_UNAUTHORIZED')
+        params = api.requestAndSubmitEmailCode("perfectly_valid_email@nowhere.test")
+        body = api.bindEmail(params["sid"], params["client_secret"], "@alice:fake.test")
+        self.assertEquals(body["errcode"], "M_UNAUTHORIZED")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     log.startLogging(sys.stdout)
     unittest.main()
