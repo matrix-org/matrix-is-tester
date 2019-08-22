@@ -18,10 +18,10 @@
 
 import unittest
 
+from .fakehs import getSharedFakeHs, tokenForUser
 from .is_api import IsApi
 from .launch_is import getOrLaunchIS
 from .mailsink import get_shared_mailsink
-from .fakehs import getSharedFakeHs, tokenForUser
 
 
 class AccountTest(unittest.TestCase):
