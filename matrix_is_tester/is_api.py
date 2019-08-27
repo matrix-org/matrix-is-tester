@@ -23,37 +23,37 @@ import string
 import requests
 from twisted.python import log
 
-from .fakehs import tokenForRandomUser
+from .fakehs import token_for_random_user
 
 
 class IsApi(object):
-    def __init__(self, baseUrl, version, mailSink):
+    def __init__(self, base_url, version, mail_sink):
         self.headers = None
 
         self.version = version
         if version == "v1":
-            self.apiRoot = baseUrl + "/_matrix/identity/api/v1"
+            self.apiRoot = base_url + "/_matrix/identity/api/v1"
         elif version == "v2":
-            self.apiRoot = baseUrl + "/_matrix/identity/v2"
+            self.apiRoot = base_url + "/_matrix/identity/v2"
         else:
             raise Exception("Invalid version: %s" % (version,))
 
-        self.mailSink = mailSink
+        self.mail_sink = mail_sink
 
     # Uses the /register API to create an account. This account will
     # be used for all subsequent API calls that requrie auth.
-    def makeAccount(self, hsAddr, openidToken=None):
+    def make_account(self, hs_addr, openid_token=None):
         if self.version != "v2":
             raise Exception("Only v2 supports authentication")
 
-        if openidToken is None:
-            openidToken = tokenForRandomUser()
+        if openid_token is None:
+            openid_token = token_for_random_user()
 
-        body = self.register(":".join([str(x) for x in hsAddr]), openidToken)
+        body = self.register(":".join([str(x) for x in hs_addr]), openid_token)
         self.headers = {"Authorization": "Bearer %s" % (body["access_token"],)}
 
-    def getTokenFromMail(self):
-        mail = self.mailSink.get_mail()
+    def get_token_from_mail(self):
+        mail = self.mail_sink.get_mail()
 
         log.msg("Got email: %r", mail)
         if "data" not in mail:
@@ -68,48 +68,48 @@ class IsApi(object):
         resp = requests.get(self.apiRoot)
         return resp.json()
 
-    def requestEmailCode(self, address, clientSecret, sendAttempt):
+    def request_email_code(self, address, client_secret, send_attempt):
         resp = requests.post(
             self.apiRoot + "/validate/email/requestToken",
             json={
-                "client_secret": clientSecret,
+                "client_secret": client_secret,
                 "email": address,
-                "send_attempt": sendAttempt,
+                "send_attempt": send_attempt,
             },
             headers=self.headers,
         )
         return resp.json()
 
-    def submitEmailTokenViaGet(self, sid, clientSecret, token):
+    def submit_email_token_via_get(self, sid, client_secret, token):
         resp = requests.get(
             self.apiRoot + "/validate/email/submitToken",
-            params={"client_secret": clientSecret, "sid": sid, "token": token},
+            params={"client_secret": client_secret, "sid": sid, "token": token},
             headers=self.headers,
         )
         return resp.content
 
-    def requestAndSubmitEmailCode(self, address):
-        clientSecret = "".join([random.choice(string.digits) for _ in range(16)])
-        reqResponse = self.requestEmailCode(address, clientSecret, 1)
+    def request_and_submit_email_code(self, address):
+        client_secret = "".join([random.choice(string.digits) for _ in range(16)])
+        req_response = self.request_email_code(address, client_secret, 1)
 
-        token = self.getTokenFromMail()
+        token = self.get_token_from_mail()
 
-        sid = reqResponse["sid"]
+        sid = req_response["sid"]
         resp = requests.post(
             self.apiRoot + "/validate/email/submitToken",
-            json={"client_secret": clientSecret, "sid": sid, "token": token},
+            json={"client_secret": client_secret, "sid": sid, "token": token},
             headers=self.headers,
         )
         body = resp.json()
         log.msg("submitToken returned %r", body)
         if not body["success"]:
             raise Exception("Submit token failed")
-        return {"sid": sid, "client_secret": clientSecret}
+        return {"sid": sid, "client_secret": client_secret}
 
-    def bindEmail(self, sid, clientSecret, mxid):
+    def bind_email(self, sid, client_secret, mxid):
         resp = requests.post(
             self.apiRoot + "/3pid/bind",
-            json={"client_secret": clientSecret, "sid": sid, "mxid": mxid},
+            json={"client_secret": client_secret, "sid": sid, "mxid": mxid},
             headers=self.headers,
         )
         return resp.json()
@@ -122,7 +122,7 @@ class IsApi(object):
         )
         return resp.json()
 
-    def bulkLookup(self, threepids):
+    def bulk_lookup(self, threepids):
         resp = requests.post(
             self.apiRoot + "/bulk_lookup",
             json={"threepids": threepids},
@@ -130,40 +130,40 @@ class IsApi(object):
         )
         return resp.json()
 
-    def getValidatedThreepid(self, sid, clientSecret):
+    def get_validated_threepid(self, sid, client_secret):
         resp = requests.get(
             self.apiRoot + "/3pid/getValidated3pid",
-            params={"sid": sid, "client_secret": clientSecret},
+            params={"sid": sid, "client_secret": client_secret},
             headers=self.headers,
         )
         return resp.json()
 
-    def storeInvite(self, params):
+    def store_invite(self, params):
         resp = requests.post(
             self.apiRoot + "/store-invite", json=params, headers=self.headers
         )
         return resp.json()
 
-    def pubkeyIsValid(self, url, pubkey):
+    def pubkey_is_valid(self, url, pubkey):
         resp = requests.get(url, params={"public_key": pubkey})
         return resp.json()
 
-    def getTerms(self):
+    def get_terms(self):
         resp = requests.get(self.apiRoot + "/terms")
         return resp.json()
 
-    def agreeToTerms(self, userAccepts):
+    def agree_to_terms(self, user_accepts):
         resp = requests.post(
             self.apiRoot + "/terms",
-            json={"user_accepts": userAccepts},
+            json={"user_accepts": user_accepts},
             headers=self.headers,
         )
         return resp.json()
 
-    def register(self, matrixServerName, accessToken):
+    def register(self, matrix_server_name, access_token):
         resp = requests.post(
             self.apiRoot + "/account/register",
-            json={"matrix_server_name": matrixServerName, "access_token": accessToken},
+            json={"matrix_server_name": matrix_server_name, "access_token": access_token},
         )
         return resp.json()
 
@@ -187,7 +187,7 @@ class IsApi(object):
         )
         return resp.json()
 
-    def checkTermsSigned(self):
+    def check_terms_signed(self):
         body = self.hash_details()
         if "algorithms" in body:
             return None

@@ -19,21 +19,21 @@ import atexit
 import smtpd
 from multiprocessing import Process, Queue
 
-sharedInstance = None
+shared_instance = None
 
 
 def get_shared_mailsink():
-    global sharedInstance
-    if sharedInstance is None:
-        sharedInstance = MailSink()
-        sharedInstance.launch()
+    global shared_instance
+    if shared_instance is None:
+        shared_instance = MailSink()
+        shared_instance.launch()
         atexit.register(destroy_shared)
-    return sharedInstance
+    return shared_instance
 
 
 def destroy_shared():
-    global sharedInstance
-    sharedInstance.tearDown()
+    global shared_instance
+    shared_instance.tearDown()
 
 
 class MailSinkSmtpServer(smtpd.SMTPServer):

@@ -18,21 +18,21 @@
 
 import unittest
 
-from .fakehs import getSharedFakeHs
+from .fakehs import get_shared_fake_hs
 from .is_api import IsApi
 from .launch_is import get_or_launch_is
 
 
 class TermsTest(unittest.TestCase):
     def setUp(self):
-        self.fakeHs = getSharedFakeHs()
-        self.fakeHsAddr = self.fakeHs.getAddr()
+        self.fakeHs = get_shared_fake_hs()
+        self.fakeHsAddr = self.fakeHs.get_addr()
 
-    def test_getTerms(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
+    def test_get_terms(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
 
-        body = api.getTerms()
+        body = api.get_terms()
         self.assertIn("policies", body)
         self.assertIn("privacy_policy", body["policies"])
         self.assertEquals(body["policies"]["privacy_policy"]["version"], "1.2")
@@ -52,101 +52,101 @@ class TermsTest(unittest.TestCase):
         self.assertIn("name", body["policies"]["terms_of_service"]["fr"])
         self.assertIn("url", body["policies"]["terms_of_service"]["fr"])
 
-    def test_agreeToTerms(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_agree_to_terms(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        agreeBody = api.agreeToTerms(
-            [termsBody["policies"]["privacy_policy"]["en"]["url"]]
+        terms_body = api.get_terms()
+        agree_body = api.agree_to_terms(
+            [terms_body["policies"]["privacy_policy"]["en"]["url"]]
         )
-        self.assertEqual(agreeBody, {})
+        self.assertEqual(agree_body, {})
 
-    def test_rejectIfNotAuthed(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
+    def test_reject_if_not_authed(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertEquals(err["errcode"], "M_UNAUTHORIZED")
 
-    def test_terms_rejectIfNoneAgreed(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_reject_if_none_agreed(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
-    def test_terms_rejectIfNotAllAgreed(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_reject_if_not_all_agreed(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        api.agreeToTerms([termsBody["policies"]["privacy_policy"]["en"]["url"]])
+        terms_body = api.get_terms()
+        api.agree_to_terms([terms_body["policies"]["privacy_policy"]["en"]["url"]])
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertEquals(err["errcode"], "M_TERMS_NOT_SIGNED")
 
-    def test_terms_allowWhenAllAgreed(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_allow_when_all_agreed(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        api.agreeToTerms(
+        terms_body = api.get_terms()
+        api.agree_to_terms(
             [
-                termsBody["policies"]["privacy_policy"]["en"]["url"],
-                termsBody["policies"]["terms_of_service"]["en"]["url"],
+                terms_body["policies"]["privacy_policy"]["en"]["url"],
+                terms_body["policies"]["terms_of_service"]["en"]["url"],
             ]
         )
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertIsNone(err)
 
-    def test_terms_allowMixedLangs(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_allow_mixed_langs(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        api.agreeToTerms(
+        terms_body = api.get_terms()
+        api.agree_to_terms(
             [
-                termsBody["policies"]["privacy_policy"]["en"]["url"],
-                termsBody["policies"]["terms_of_service"]["fr"]["url"],
+                terms_body["policies"]["privacy_policy"]["en"]["url"],
+                terms_body["policies"]["terms_of_service"]["fr"]["url"],
             ]
         )
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertIsNone(err)
 
-    def test_terms_allowInSeparateCalls(self):
-        baseUrl = get_or_launch_is(True)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_allow_in_separate_calls(self):
+        base_url = get_or_launch_is(True)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        api.agreeToTerms([termsBody["policies"]["privacy_policy"]["en"]["url"]])
-        api.agreeToTerms([termsBody["policies"]["terms_of_service"]["en"]["url"]])
+        terms_body = api.get_terms()
+        api.agree_to_terms([terms_body["policies"]["privacy_policy"]["en"]["url"]])
+        api.agree_to_terms([terms_body["policies"]["terms_of_service"]["en"]["url"]])
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertIsNone(err)
 
-    def test_terms_noTerms(self):
-        baseUrl = get_or_launch_is(False)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_no_terms(self):
+        base_url = get_or_launch_is(False)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        termsBody = api.getTerms()
-        self.assertEquals(termsBody["policies"], {})
+        terms_body = api.get_terms()
+        self.assertEquals(terms_body["policies"], {})
 
-    def test_terms_allowIfNoTerms(self):
-        baseUrl = get_or_launch_is(False)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr)
+    def test_terms_allow_if_no_terms(self):
+        base_url = get_or_launch_is(False)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(self.fakeHsAddr)
 
-        err = api.checkTermsSigned()
+        err = api.check_terms_signed()
         self.assertIsNone(err)
 
 
