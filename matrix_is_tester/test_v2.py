@@ -19,7 +19,7 @@
 import unittest
 
 from .base_api_test import BaseApiTest
-from .fakehs import getSharedFakeHs
+from .fakehs import get_shared_fake_hs
 
 
 class V2Test(BaseApiTest, unittest.TestCase):
@@ -28,12 +28,12 @@ class V2Test(BaseApiTest, unittest.TestCase):
     def setUp(self):
         super(V2Test, self).setUp()
 
-        self.fakeHs = getSharedFakeHs()
-        self.api.makeAccount(self.fakeHs.getAddr())
+        self.fakeHs = get_shared_fake_hs()
+        self.api.make_account(self.fakeHs.get_addr())
 
     def test_bind_and_lookup(self):
-        params = self.api.requestAndSubmitEmailCode("fakeemail3@nowhere.test")
-        body = self.api.bindEmail(
+        params = self.api.request_and_submit_email_code("fakeemail3@nowhere.test")
+        body = self.api.bind_email(
             params["sid"], params["client_secret"], "@some_mxid:fake.test"
         )
 
@@ -43,13 +43,13 @@ class V2Test(BaseApiTest, unittest.TestCase):
 
         hash_details = self.api.hash_details()
 
-        lookupStr = "%s %s" % ("fakeemail3@nowhere.test", "email")
+        lookup_str = "%s %s" % ("fakeemail3@nowhere.test", "email")
         body2 = self.api.hashed_lookup(
-            [lookupStr], "none", hash_details["lookup_pepper"]
+            [lookup_str], "none", hash_details["lookup_pepper"]
         )
 
-        self.assertIn(lookupStr, body2["mappings"])
-        self.assertEquals(body2["mappings"][lookupStr], "@some_mxid:fake.test")
+        self.assertIn(lookup_str, body2["mappings"])
+        self.assertEquals(body2["mappings"][lookup_str], "@some_mxid:fake.test")
 
 
 if __name__ == "__main__":

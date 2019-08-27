@@ -33,22 +33,22 @@ except ImportError:
 launchers = {}
 
 
-def get_or_launch_is(withTerms=False):
+def get_or_launch_is(with_terms=False):
     global launchers
 
-    key = "withTerms" if withTerms else "noTerms"
+    key = "withTerms" if with_terms else "noTerms"
 
     if key not in launchers:
         if not launchers:
-            atexit.register(destroyAll)
+            atexit.register(destroy_all)
 
-        launchers[key] = MatrixIsTestLauncher(withTerms)
+        launchers[key] = MatrixIsTestLauncher(with_terms)
         launchers[key].launch()
 
     return launchers[key].get_base_url()
 
 
-def destroyAll():
+def destroy_all():
     global launchers
 
     for launcher in launchers.values():

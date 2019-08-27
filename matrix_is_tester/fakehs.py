@@ -26,30 +26,30 @@ from multiprocessing import Process
 
 random.seed(1)
 
-sharedFakeHs = None
+shared_fake_hs = None
 
 
-def tokenForRandomUser():
+def token_for_random_user():
     num = random.randint(0, 2 ** 32)
-    userId = "@user%d:localhost:4490" % (num,)
-    return "user:%s" % (base64.b64encode(userId),)
+    user_id = "@user%d:localhost:4490" % (num,)
+    return "user:%s" % (base64.b64encode(user_id),)
 
 
-def tokenForUser(userId):
-    return "user:%s" % (base64.b64encode(userId),)
+def token_for_user(user_id):
+    return "user:%s" % (base64.b64encode(user_id),)
 
 
-def getSharedFakeHs():
-    global sharedFakeHs
-    if sharedFakeHs is None:
-        sharedFakeHs = FakeHomeserver()
-        sharedFakeHs.launch()
-        atexit.register(destroyShared)
-    return sharedFakeHs
+def get_shared_fake_hs():
+    global shared_fake_hs
+    if shared_fake_hs is None:
+        shared_fake_hs = FakeHomeserver()
+        shared_fake_hs.launch()
+        atexit.register(destroy_shared)
+    return shared_fake_hs
 
 
-def destroyShared():
-    sharedFakeHs.tearDown()
+def destroy_shared():
+    shared_fake_hs.tearDown()
 
 
 class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -92,20 +92,20 @@ class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return
 
 
-def runHttpServer():
-    certFile = os.path.join(os.path.dirname(__file__), "fakehs.pem")
+def run_http_server():
+    cert_file = os.path.join(os.path.dirname(__file__), "fakehs.pem")
 
     httpd = BaseHTTPServer.HTTPServer(("localhost", 4490), FakeHomeserverRequestHandler)
-    httpd.socket = ssl.wrap_socket(httpd.socket, certfile=certFile, server_side=True)
+    httpd.socket = ssl.wrap_socket(httpd.socket, certfile=cert_file, server_side=True)
     httpd.serve_forever()
 
 
 class FakeHomeserver(object):
     def launch(self):
-        self.process = Process(target=runHttpServer)
+        self.process = Process(target=run_http_server)
         self.process.start()
 
-    def getAddr(self):
+    def get_addr(self):
         return ("localhost", 4490)
 
     def tearDown(self):
