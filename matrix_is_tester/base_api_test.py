@@ -61,7 +61,9 @@ class BaseApiTest:
         self.api.request_and_submit_email_code("fakeemail2@nowhere.test")
 
     def test_submit_email_code_get(self):
-        req_response = self.api.request_email_code("steve@nowhere.test", "verysekrit", 1)
+        req_response = self.api.request_email_code(
+            "steve@nowhere.test", "verysekrit", 1
+        )
         sid = req_response["sid"]
 
         token = self.api.get_token_from_mail()
@@ -76,7 +78,7 @@ class BaseApiTest:
 
     def test_unverified_bind(self):
         req_code_body = self.api.request_email_code(
-            "fakeemail5@nowhere.test", "sekrit", 1,
+            "fakeemail5@nowhere.test", "sekrit", 1
         )
         # get the mail so we don't leave it in the queue
         self.mailSink.get_mail()
@@ -95,7 +97,7 @@ class BaseApiTest:
 
     def test_get_validated_threepid_not_validated(self):
         req_code_body = self.api.request_email_code(
-            "fakeemail5@nowhere.test", "sekrit", 1,
+            "fakeemail5@nowhere.test", "sekrit", 1
         )
         # get the mail, otherwise the next test will get it
         # instead of the one it was expecting
@@ -124,7 +126,9 @@ class BaseApiTest:
         self.assertGreater(len(body["public_keys"]), 0)
 
         for k in body["public_keys"]:
-            is_valid_body = self.api.pubkey_is_valid(k["key_validity_url"], k["public_key"])
+            is_valid_body = self.api.pubkey_is_valid(
+                k["key_validity_url"], k["public_key"]
+            )
             self.assertTrue(is_valid_body["valid"])
 
         mail = self.mailSink.get_mail()
@@ -135,7 +139,9 @@ class BaseApiTest:
         self.assertEquals(mail_object["room_avatar_url"], "mxc://fake.test/roomavatar")
         self.assertEquals(mail_object["room_name"], "my excellent room")
         self.assertEquals(mail_object["sender_display_name"], "Ian Sender")
-        self.assertEquals(mail_object["sender_avatar_url"], "mxc://fake.test/iansavatar")
+        self.assertEquals(
+            mail_object["sender_avatar_url"], "mxc://fake.test/iansavatar"
+        )
 
     def test_store_invite_bound_threepid(self):
         params = self.api.request_and_submit_email_code("already_here@fake.test")

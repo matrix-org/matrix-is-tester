@@ -163,7 +163,10 @@ class IsApi(object):
     def register(self, matrix_server_name, access_token):
         resp = requests.post(
             self.apiRoot + "/account/register",
-            json={"matrix_server_name": matrix_server_name, "access_token": access_token},
+            json={
+                "matrix_server_name": matrix_server_name,
+                "access_token": access_token,
+            },
         )
         return resp.json()
 

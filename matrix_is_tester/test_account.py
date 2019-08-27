@@ -31,7 +31,9 @@ class AccountTest(unittest.TestCase):
     def test_account(self):
         base_url = get_or_launch_is(False)
         api = IsApi(base_url, "v2", None)
-        api.make_account(self.fakeHsAddr, token_for_user("@jimmy_account_test:fake.test"))
+        api.make_account(
+            self.fakeHsAddr, token_for_user("@jimmy_account_test:fake.test")
+        )
 
         body = api.account()
 

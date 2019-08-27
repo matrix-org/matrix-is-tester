@@ -36,7 +36,9 @@ class AccountTest(unittest.TestCase):
         api.make_account(self.fakeHsAddr, token_for_user("@bob:fake.test"))
 
         params = api.request_and_submit_email_code("perfectly_valid_email@nowhere.test")
-        body = api.bind_email(params["sid"], params["client_secret"], "@alice:fake.test")
+        body = api.bind_email(
+            params["sid"], params["client_secret"], "@alice:fake.test"
+        )
         self.assertEquals(body["errcode"], "M_UNAUTHORIZED")
 
 
