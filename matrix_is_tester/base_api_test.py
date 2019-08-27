@@ -26,7 +26,7 @@ import unittest
 from twisted.python import log
 
 from .is_api import IsApi
-from .launch_is import getOrLaunchIS
+from .launch_is import get_or_launch_is
 from .mailsink import get_shared_mailsink
 
 
@@ -34,7 +34,7 @@ from .mailsink import get_shared_mailsink
 # between versions. Subclasses provide self.api
 class BaseApiTest:
     def setUp(self):
-        self.baseUrl = getOrLaunchIS()
+        self.baseUrl = get_or_launch_is()
 
         self.mailSink = get_shared_mailsink()
 

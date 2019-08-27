@@ -20,7 +20,7 @@ import unittest
 
 from .fakehs import getSharedFakeHs
 from .is_api import IsApi
-from .launch_is import getOrLaunchIS
+from .launch_is import get_or_launch_is
 
 
 class LogoutTest(unittest.TestCase):
@@ -29,7 +29,7 @@ class LogoutTest(unittest.TestCase):
         self.fakeHsAddr = self.fakeHs.getAddr()
 
     def test_logout(self):
-        baseUrl = getOrLaunchIS(False)
+        baseUrl = get_or_launch_is(False)
         api = IsApi(baseUrl, "v2", None)
         api.makeAccount(self.fakeHsAddr)
 
