@@ -25,17 +25,17 @@ class V1Test(BaseApiTest, unittest.TestCase):
     API_VERSION = "v1"
 
     def test_bulk_lookup(self):
-        params = self.api.requestAndSubmitEmailCode("thing1@nowhere.test")
-        body = self.api.bindEmail(
+        params = self.api.request_and_submit_email_code("thing1@nowhere.test")
+        body = self.api.bind_email(
             params["sid"], params["client_secret"], "@thing1:fake.test"
         )
 
-        params = self.api.requestAndSubmitEmailCode("thing2@nowhere.test")
-        body = self.api.bindEmail(
+        params = self.api.request_and_submit_email_code("thing2@nowhere.test")
+        body = self.api.bind_email(
             params["sid"], params["client_secret"], "@thing2:fake.test"
         )
 
-        body = self.api.bulkLookup(
+        body = self.api.bulk_lookup(
             [
                 ("email", "thing1@nowhere.test"),
                 ("email", "thing2@nowhere.test"),
@@ -52,8 +52,8 @@ class V1Test(BaseApiTest, unittest.TestCase):
         self.assertEquals(len(body["threepids"]), 2)
 
     def test_bind_and_lookup(self):
-        params = self.api.requestAndSubmitEmailCode("fakeemail3@nowhere.test")
-        body = self.api.bindEmail(
+        params = self.api.request_and_submit_email_code("fakeemail3@nowhere.test")
+        body = self.api.bind_email(
             params["sid"], params["client_secret"], "@some_mxid:fake.test"
         )
 

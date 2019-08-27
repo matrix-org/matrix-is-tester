@@ -18,20 +18,22 @@
 
 import unittest
 
-from .fakehs import getSharedFakeHs, tokenForUser
+from .fakehs import get_shared_fake_hs, token_for_user
 from .is_api import IsApi
 from .launch_is import get_or_launch_is
 
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        self.fakeHs = getSharedFakeHs()
-        self.fakeHsAddr = self.fakeHs.getAddr()
+        self.fakeHs = get_shared_fake_hs()
+        self.fakeHsAddr = self.fakeHs.get_addr()
 
     def test_account(self):
-        baseUrl = get_or_launch_is(False)
-        api = IsApi(baseUrl, "v2", None)
-        api.makeAccount(self.fakeHsAddr, tokenForUser("@jimmy_account_test:fake.test"))
+        base_url = get_or_launch_is(False)
+        api = IsApi(base_url, "v2", None)
+        api.make_account(
+            self.fakeHsAddr, token_for_user("@jimmy_account_test:fake.test")
+        )
 
         body = api.account()
 
