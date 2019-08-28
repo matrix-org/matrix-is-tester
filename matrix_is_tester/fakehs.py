@@ -24,6 +24,7 @@ import ssl
 import urlparse
 from multiprocessing import Process
 
+# seed prng with constant value so tests are deterministic
 random.seed(1)
 
 shared_fake_hs = None
