@@ -27,7 +27,16 @@ from fakehs import token_for_random_user
 
 
 class IsApi(object):
+    """
+    Wrappers around the IS REST API
+    """
     def __init__(self, base_url, version, mail_sink):
+        """
+        Args:
+            base_url: The base URL of the IS API to use
+            version: Version of the IS API (eg. 'v1' or 'v2')
+            mail_sink: Mail sink object to use for getting email authentication tokens.
+        """
         self.headers = None
 
         self.version = version
