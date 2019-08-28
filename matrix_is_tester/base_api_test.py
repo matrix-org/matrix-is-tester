@@ -30,9 +30,11 @@ from .launch_is import get_or_launch_is
 from .mailsink import get_shared_mailsink
 
 
-# Not a test case itself, but can be subclassed to test APIs common
-# between versions. Subclasses provide self.api
 class BaseApiTest(object):
+    """
+    Not a test case itself, but can be subclassed to test APIs common
+    between versions.
+    """
     def setUp(self):
         self.baseUrl = get_or_launch_is()
 
