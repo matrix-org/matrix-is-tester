@@ -31,29 +31,40 @@ shared_fake_hs = None
 
 
 def token_for_random_user():
+    """
+    Return an OpenID token as would be obtained from the client/server API.
+    The token will represent a random user account.
+    """
     num = random.randint(0, 2 ** 32)
     user_id = "@user%d:localhost:4490" % (num,)
     return "user:%s" % (base64.b64encode(user_id),)
 
 
 def token_for_user(user_id):
+    """
+    Return an OpenID token as would be obtained from the client/server API.
+    The token will represent a the user_id given.
+    """
     return "user:%s" % (base64.b64encode(user_id),)
 
 
 def get_shared_fake_hs():
+    """
+    Get the shared fake homeserver object, instantiating it if necessary.
+    """
     global shared_fake_hs
     if shared_fake_hs is None:
         shared_fake_hs = FakeHomeserver()
         shared_fake_hs.launch()
-        atexit.register(destroy_shared)
+        atexit.register(_destroy_shared)
     return shared_fake_hs
 
 
-def destroy_shared():
+def _destroy_shared():
     shared_fake_hs.tearDown()
 
 
-class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/_matrix/federation/v1/openid/userinfo"):
             parsed = urlparse.urlparse(self.path)
@@ -93,19 +104,27 @@ class FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return
 
 
-def run_http_server():
+def _run_http_server():
     cert_file = os.path.join(os.path.dirname(__file__), "fakehs.pem")
 
-    httpd = BaseHTTPServer.HTTPServer(("localhost", 4490), FakeHomeserverRequestHandler)
+    httpd = BaseHTTPServer.HTTPServer(("localhost", 4490), _FakeHomeserverRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=cert_file, server_side=True)
     httpd.serve_forever()
 
 
 class FakeHomeserver(object):
+    """
+    A class that spawns an HTTP server that looks like a Matrix Homeserver.
+    Currently just implements the federation OpenID endpoint to validate OpenID tokens. 
+    """
     def launch(self):
-        self.process = Process(target=run_http_server)
+        self.process = Process(target=_run_http_server)
         self.process.start()
 
+        """
+        Returns a host, port tuple representing the address on which the fake homeserver
+        is listening for requests.
+        """
     def get_addr(self):
         return ("localhost", 4490)
 
