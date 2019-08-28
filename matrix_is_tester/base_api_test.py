@@ -32,7 +32,7 @@ from .mailsink import get_shared_mailsink
 
 # Not a test case itself, but can be subclassed to test APIs common
 # between versions. Subclasses provide self.api
-class BaseApiTest:
+class BaseApiTest(object):
     def setUp(self):
         self.baseUrl = get_or_launch_is()
 
