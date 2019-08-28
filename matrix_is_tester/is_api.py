@@ -30,6 +30,7 @@ class IsApi(object):
     """
     Wrappers around the IS REST API
     """
+
     def __init__(self, base_url, version, mail_sink):
         """
         Args:

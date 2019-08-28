@@ -107,7 +107,9 @@ class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 def _run_http_server():
     cert_file = os.path.join(os.path.dirname(__file__), "fakehs.pem")
 
-    httpd = BaseHTTPServer.HTTPServer(("localhost", 4490), _FakeHomeserverRequestHandler)
+    httpd = BaseHTTPServer.HTTPServer(
+        ("localhost", 4490), _FakeHomeserverRequestHandler
+    )
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=cert_file, server_side=True)
     httpd.serve_forever()
 
@@ -117,6 +119,7 @@ class FakeHomeserver(object):
     A class that spawns an HTTP server that looks like a Matrix Homeserver.
     Currently just implements the federation OpenID endpoint to validate OpenID tokens. 
     """
+
     def launch(self):
         self.process = Process(target=_run_http_server)
         self.process.start()
@@ -125,6 +128,7 @@ class FakeHomeserver(object):
         Returns a host, port tuple representing the address on which the fake homeserver
         is listening for requests.
         """
+
     def get_addr(self):
         return ("localhost", 4490)
 
