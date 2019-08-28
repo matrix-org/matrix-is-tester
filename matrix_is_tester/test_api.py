@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import atexit
 import re
 import sys
 import unittest
@@ -24,49 +23,13 @@ import unittest
 import requests
 from twisted.python import log
 
+from matrix_is_tester.launch_is import get_or_launch_is
 from matrix_is_tester.mailsink import MailSink
-
-try:
-    from matrix_is_test.launcher import MatrixIsTestLauncher
-except ImportError:
-    print("ERROR: Couldn't import launcher")
-    print(
-        "matrix_is_tester needs an identity server to test: make sure, "
-        "'matrix_is_test.launcher.MatrixIsTestLauncher' is in "
-        "sys.path"
-    )
-
-    raise
-
-launcher = None
-base_url = None
-
-
-def _get_or_launch_is():
-    global launcher
-    global base_url
-
-    if launcher is not None:
-        return base_url
-
-    launcher = MatrixIsTestLauncher()
-    base_url = launcher.launch()
-
-    atexit.register(destroy_is)
-
-    return base_url
-
-
-def destroy_is():
-    global launcher
-
-    if launcher is not None:
-        launcher.tearDown()
 
 
 class IsApiTest(unittest.TestCase):
     def setUp(self):
-        self.baseUrl = _get_or_launch_is()
+        self.baseUrl = get_or_launch_is()
 
         self.mailsink = MailSink()
         self.mailsink.launch()
