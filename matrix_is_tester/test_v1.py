@@ -18,7 +18,7 @@
 
 import unittest
 
-from .base_api_test import BaseApiTest
+from base_api_test import BaseApiTest
 
 
 class V1Test(BaseApiTest, unittest.TestCase):

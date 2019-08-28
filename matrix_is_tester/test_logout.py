@@ -18,9 +18,9 @@
 
 import unittest
 
-from .fakehs import get_shared_fake_hs
-from .is_api import IsApi
-from .launch_is import get_or_launch_is
+from fakehs import get_shared_fake_hs
+from is_api import IsApi
+from launch_is import get_or_launch_is
 
 
 class LogoutTest(unittest.TestCase):
