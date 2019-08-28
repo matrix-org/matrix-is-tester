@@ -117,7 +117,7 @@ def _run_http_server():
 class FakeHomeserver(object):
     """
     A class that spawns an HTTP server that looks like a Matrix Homeserver.
-    Currently just implements the federation OpenID endpoint to validate OpenID tokens. 
+    Currently just implements the federation OpenID endpoint to validate OpenID tokens.
     """
 
     def launch(self):
