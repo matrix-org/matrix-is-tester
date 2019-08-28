@@ -45,7 +45,7 @@ class BaseApiTest(object):
         # seed prng with constant value so tests are deterministic
         random.seed(1)
 
-    def test_v1ping(self):
+    def test_ping(self):
         body = self.api.ping()
         self.assertEquals(body, {})
 
