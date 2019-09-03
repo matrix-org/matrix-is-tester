@@ -43,7 +43,7 @@ def token_for_random_user():
 def token_for_user(user_id):
     """
     Return an OpenID token as would be obtained from the client/server API.
-    The token will represent a the user_id given.
+    The token will represent the user_id given.
     """
     return "user:%s" % (base64.b64encode(user_id),)
 
