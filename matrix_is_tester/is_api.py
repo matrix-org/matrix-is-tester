@@ -23,7 +23,7 @@ import string
 import requests
 from twisted.python import log
 
-from fakehs import token_for_random_user
+from matrix_is_tester.fakehs import token_for_random_user
 
 
 class IsApi(object):

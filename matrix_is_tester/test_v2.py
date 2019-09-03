@@ -18,8 +18,8 @@
 
 import unittest
 
-from base_api_test import BaseApiTest
-from fakehs import get_shared_fake_hs
+from matrix_is_tester.base_api_test import BaseApiTest
+from matrix_is_tester.fakehs import get_shared_fake_hs
 
 
 class V2Test(BaseApiTest, unittest.TestCase):

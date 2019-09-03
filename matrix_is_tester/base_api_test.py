@@ -25,9 +25,9 @@ import unittest
 # use python 'logging': it only works if you use Twisted's own.
 from twisted.python import log
 
-from is_api import IsApi
-from launch_is import get_or_launch_is
-from mailsink import get_shared_mailsink
+from matrix_is_tester.is_api import IsApi
+from matrix_is_tester.launch_is import get_or_launch_is
+from matrix_is_tester.mailsink import get_shared_mailsink
 
 
 class BaseApiTest(object):
