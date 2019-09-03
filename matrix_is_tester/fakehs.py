@@ -121,12 +121,11 @@ class FakeHomeserver(object):
         self.process = Process(target=_run_http_server)
         self.process.start()
 
+    def get_addr(self):
         """
         Returns a host, port tuple representing the address on which the fake homeserver
         is listening for requests.
         """
-
-    def get_addr(self):
         return ("localhost", 4490)
 
     def tearDown(self):
