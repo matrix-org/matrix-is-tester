@@ -43,9 +43,6 @@ class BaseApiTest(object):
 
         self.api = IsApi(self.baseUrl, self.API_VERSION, self.mailSink)
 
-        # seed prng with constant value so tests are deterministic
-        random.seed(1)
-
     def test_ping(self):
         body = self.api.ping()
         self.assertEquals(body, {})
