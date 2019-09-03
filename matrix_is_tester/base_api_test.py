@@ -17,7 +17,6 @@
 # limitations under the License.
 
 import json
-import random
 import unittest
 
 # These are standard python unit tests, but are generally intended

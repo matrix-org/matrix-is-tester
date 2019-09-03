@@ -36,7 +36,8 @@ class IsApi(object):
         Args:
             base_url (bytes): The base URL of the IS API to use
             version (bytes): Version of the IS API (eg. 'v1' or 'v2')
-            mail_sink (MailSink): Mail sink object to use for getting email authentication tokens.
+            mail_sink (MailSink): Mail sink object to use for getting email
+                authentication tokens.
         """
         self.headers = None
 
