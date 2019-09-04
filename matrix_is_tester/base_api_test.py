@@ -17,7 +17,6 @@
 # limitations under the License.
 
 import json
-import unittest
 
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you
@@ -77,23 +76,15 @@ class BaseApiTest(object):
         self.assertEquals(body["medium"], "email")
         self.assertEquals(body["address"], "steve@nowhere.test")
 
-    def test_bind_toBadMxid(self):
-        raise unittest.SkipTest("sydent allows this currently")
-        params = self.api.requestAndSubmitEmailCode(
-            "perfectly_valid_email@nowhere.test"
-        )
-        body = self.api.bindEmail(
-            params["sid"], params["client_secret"], "not a valid mxid"
-        )
-        self.assertEquals(body["errcode"], "M_INVALID_PARAM")
-
     def test_unverified_bind(self):
         req_code_body = self.api.request_email_code(
             "fakeemail5@nowhere.test", "sekrit", 1
         )
         # get the mail so we don't leave it in the queue
         self.mailSink.get_mail()
-        body = self.api.bind_email(req_code_body["sid"], "sekrit", "@thing1:fake.test")
+        body = self.api.bind_email(
+            req_code_body["sid"], "sekrit", "@commonapitests:fake.test"
+        )
         self.assertEquals(body["errcode"], "M_SESSION_NOT_VALIDATED")
 
     def test_get_validated_threepid(self):
