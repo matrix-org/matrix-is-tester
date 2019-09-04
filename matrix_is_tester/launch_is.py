@@ -30,27 +30,26 @@ except ImportError:
 
     raise
 
-launcher = None
-base_url = None
+launchers = {}
 
 
-def get_or_launch_is():
-    global launcher
-    global base_url
+def get_or_launch_is(with_terms=False):
+    global launchers
 
-    if launcher is not None:
-        return base_url
+    key = "withTerms" if with_terms else "noTerms"
 
-    launcher = MatrixIsTestLauncher()
-    base_url = launcher.launch()
+    if key not in launchers:
+        if not launchers:
+            atexit.register(destroy_all)
 
-    atexit.register(destroy_is)
+        launchers[key] = MatrixIsTestLauncher(with_terms)
+        launchers[key].launch()
 
-    return base_url
+    return launchers[key].get_base_url()
 
 
-def destroy_is():
-    global launcher
+def destroy_all():
+    global launchers
 
-    if launcher is not None:
+    for launcher in launchers.values():
         launcher.tearDown()

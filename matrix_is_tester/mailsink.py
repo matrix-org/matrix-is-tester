@@ -15,8 +15,25 @@
 # limitations under the License.
 
 import asyncore
+import atexit
 import smtpd
 from multiprocessing import Process, Queue
+
+shared_instance = None
+
+
+def get_shared_mailsink():
+    global shared_instance
+    if shared_instance is None:
+        shared_instance = MailSink()
+        shared_instance.launch()
+        atexit.register(destroy_shared)
+    return shared_instance
+
+
+def destroy_shared():
+    global shared_instance
+    shared_instance.tearDown()
 
 
 class MailSinkSmtpServer(smtpd.SMTPServer):
@@ -31,7 +48,7 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
 
 
 def run_mail_sink(q):
-    MailSinkSmtpServer(("127.0.0.1", 1025), None, q)
+    MailSinkSmtpServer(("127.0.0.1", 9925), None, q)
     asyncore.loop()
 
 
@@ -42,7 +59,7 @@ class MailSink(object):
         self.process.start()
 
     def get_mail(self):
-        return self.queue.get()
+        return self.queue.get(timeout=0.5)
 
     def tearDown(self):
         self.process.terminate()
