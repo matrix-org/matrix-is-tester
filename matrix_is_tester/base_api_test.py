@@ -17,21 +17,24 @@
 # limitations under the License.
 
 import json
-import random
+import unittest
 
 # These are standard python unit tests, but are generally intended
 # to be run with trial. Trial doesn't capture logging nicely if you
 # use python 'logging': it only works if you use Twisted's own.
 from twisted.python import log
 
-from .is_api import IsApi
-from .launch_is import get_or_launch_is
-from .mailsink import get_shared_mailsink
+from matrix_is_tester.is_api import IsApi
+from matrix_is_tester.launch_is import get_or_launch_is
+from matrix_is_tester.mailsink import get_shared_mailsink
 
 
-# Not a test case itself, but can be subclassed to test APIs common
-# between versions. Subclasses provide self.api
-class BaseApiTest:
+class BaseApiTest(object):
+    """
+    Not a test case itself, but can be subclassed to test APIs common
+    between versions.
+    """
+
     def setUp(self):
         self.baseUrl = get_or_launch_is()
 
@@ -39,9 +42,7 @@ class BaseApiTest:
 
         self.api = IsApi(self.baseUrl, self.API_VERSION, self.mailSink)
 
-        random.seed(1)
-
-    def test_v1ping(self):
+    def test_ping(self):
         body = self.api.ping()
         self.assertEquals(body, {})
 

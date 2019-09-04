@@ -23,11 +23,24 @@ import string
 import requests
 from twisted.python import log
 
-from .fakehs import token_for_random_user
+from matrix_is_tester.fakehs import token_for_random_user
 
 
 class IsApi(object):
+    """
+    Wrappers around the IS REST API
+    """
+
     def __init__(self, base_url, version, mail_sink):
+        """
+        Args:
+            base_url (str): The base URL of the IS API to use
+            version (str): Version of the IS API (eg. 'v1' or 'v2')
+                XXX: make these either bytes or unicode and fix up the call sites
+                to use the right one.
+            mail_sink (MailSink): Mail sink object to use for getting email
+                authentication tokens.
+        """
         self.headers = None
 
         self.version = version
