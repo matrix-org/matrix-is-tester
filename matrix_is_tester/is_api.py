@@ -34,8 +34,10 @@ class IsApi(object):
     def __init__(self, base_url, version, mail_sink):
         """
         Args:
-            base_url (bytes): The base URL of the IS API to use
-            version (bytes): Version of the IS API (eg. 'v1' or 'v2')
+            base_url (str): The base URL of the IS API to use
+            version (str): Version of the IS API (eg. 'v1' or 'v2')
+                XXX: make these either bytes or unicode and fix up the call sites
+                to use the right one.
             mail_sink (MailSink): Mail sink object to use for getting email
                 authentication tokens.
         """
