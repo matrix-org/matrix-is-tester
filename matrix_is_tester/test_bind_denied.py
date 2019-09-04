@@ -26,14 +26,14 @@ from matrix_is_tester.mailsink import get_shared_mailsink
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        self.fakeHs = get_shared_fake_hs()
-        self.fakeHsAddr = self.fakeHs.get_addr()
-        self.mailSink = get_shared_mailsink()
+        self.fake_hs = get_shared_fake_hs()
+        self.fake_hs_addr = self.fake_hs.get_addr()
+        self.mail_sink = get_shared_mailsink()
 
     def test_bind_notYourMxid(self):
-        baseUrl = get_or_launch_is(False)
-        api = IsApi(baseUrl, "v2", self.mailSink)
-        api.make_account(self.fakeHsAddr, token_for_user("@bob:fake.test"))
+        base_url = get_or_launch_is(False)
+        api = IsApi(base_url, "v2", self.mail_sink)
+        api.make_account(self.fake_hs_addr, token_for_user("@bob:fake.test"))
 
         params = api.request_and_submit_email_code("perfectly_valid_email@nowhere.test")
         body = api.bind_email(
