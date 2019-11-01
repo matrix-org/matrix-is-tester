@@ -2,7 +2,7 @@ matrix-is-tester
 ================
 
 matrix-is-tester is an integration testing system for Matrix Identity servers, similar
-to sytest (although using python rather than perl).
+to sytest (although using python rather than perl). It is written in Python 2.
 
 To launch the IS server, it attempts to import
 `matrix_is_test.launcher.MatrixIsTestLauncher`. This must be provided separately
