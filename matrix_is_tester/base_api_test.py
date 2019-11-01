@@ -47,7 +47,7 @@ class BaseApiTest(object):
 
     def test_request_email_code(self):
         body = self.api.request_email_code("fakeemail1@nowhere.test", "sekrit", 1)
-        log.msg("Got response %r", body)
+        log.msg("Got response %r" % body)
         self.assertIn("sid", body)
         self.mailSink.get_mail()
 
@@ -132,7 +132,7 @@ class BaseApiTest(object):
             self.assertTrue(is_valid_body["valid"])
 
         mail = self.mailSink.get_mail()
-        log.msg("Got email (invite): %r", mail)
+        log.msg("Got email (invite): %r" % mail)
         mail_object = json.loads(mail["data"])
         self.assertEquals(mail_object["token"], body["token"])
         self.assertEquals(mail_object["room_alias"], "#alias:fake.test")

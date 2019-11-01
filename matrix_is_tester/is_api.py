@@ -68,7 +68,7 @@ class IsApi(object):
     def get_token_from_mail(self):
         mail = self.mail_sink.get_mail()
 
-        log.msg("Got email: %r", mail)
+        log.msg("Got email: %r" % mail)
         if "data" not in mail:
             raise Exception("Mail has no 'data'")
         matches = re.match(r"<<<(.*)>>>", mail["data"])
@@ -114,7 +114,7 @@ class IsApi(object):
             headers=self.headers,
         )
         body = resp.json()
-        log.msg("submitToken returned %r", body)
+        log.msg("submitToken returned %r" % body)
         if not body["success"]:
             raise Exception("Submit token failed")
         return {"sid": sid, "client_secret": client_secret}
