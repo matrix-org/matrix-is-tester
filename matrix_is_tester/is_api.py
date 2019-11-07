@@ -63,7 +63,7 @@ class IsApi(object):
             openid_token = token_for_random_user()
 
         body = self.register(":".join([str(x) for x in hs_addr]), openid_token)
-        self.headers = {"Authorization": "Bearer %s" % (body["access_token"],)}
+        self.headers = {"Authorization": "Bearer %s" % (body["token"],)}
 
     def get_token_from_mail(self):
         mail = self.mail_sink.get_mail()
