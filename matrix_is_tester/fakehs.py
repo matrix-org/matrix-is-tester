@@ -16,12 +16,12 @@
 
 import atexit
 import base64
-import BaseHTTPServer
+import http.server
 import json
 import os
 import random
 import ssl
-import urlparse
+import urllib.parse
 from multiprocessing import Process
 
 shared_fake_hs = None
@@ -34,7 +34,7 @@ def token_for_random_user():
     """
     num = random.randint(0, 2 ** 32)
     user_id = "@user%d:localhost:4490" % (num,)
-    return "user:%s" % (base64.b64encode(user_id),)
+    return "user:%s" % (base64.b64encode(user_id.encode("UTF-8")).decode("UTF-8"),)
 
 
 def token_for_user(user_id):
@@ -42,7 +42,7 @@ def token_for_user(user_id):
     Return an OpenID token as would be obtained from the client/server API.
     The token will represent the user_id given.
     """
-    return "user:%s" % (base64.b64encode(user_id),)
+    return "user:%s" % (base64.b64encode(user_id.encode("UTF-8")).decode("UTF-8"),)
 
 
 def get_shared_fake_hs():
@@ -61,11 +61,11 @@ def _destroy_shared():
     shared_fake_hs.tearDown()
 
 
-class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class _FakeHomeserverRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/_matrix/federation/v1/openid/userinfo"):
-            parsed = urlparse.urlparse(self.path)
-            params = urlparse.parse_qs(parsed.query)
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
 
             token = params["access_token"][0]
 
@@ -84,7 +84,7 @@ class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                 self.wfile.write(resp)
 
-            resp = json.dumps({"sub": userid})
+            resp = json.dumps({"sub": userid.decode("UTF-8")}).encode("UTF-8")
 
             self.send_response(200)
             self.send_header("Content-Length", len(resp))
@@ -104,9 +104,7 @@ class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 def _run_http_server():
     cert_file = os.path.join(os.path.dirname(__file__), "fakehs.pem")
 
-    httpd = BaseHTTPServer.HTTPServer(
-        ("localhost", 4490), _FakeHomeserverRequestHandler
-    )
+    httpd = http.server.HTTPServer(("localhost", 4490), _FakeHomeserverRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=cert_file, server_side=True)
     httpd.serve_forever()
 

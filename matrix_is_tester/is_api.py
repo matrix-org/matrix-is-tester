@@ -71,7 +71,7 @@ class IsApi(object):
         log.msg("Got email: %r", mail)
         if "data" not in mail:
             raise Exception("Mail has no 'data'")
-        matches = re.match(r"<<<(.*)>>>", mail["data"])
+        matches = re.match(r"<<<(.*)>>>", mail["data"].decode("UTF-8"))
         if not matches.group(1):
             raise Exception("Failed to match token from mail")
 

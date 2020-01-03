@@ -69,7 +69,7 @@ class BaseApiTest(object):
         token = self.api.get_token_from_mail()
 
         body = self.api.submit_email_token_via_get(sid, "verysekrit", token)
-        self.assertEquals(body, "matrix_is_tester:email_submit_get_response\n")
+        self.assertEquals(body, b"matrix_is_tester:email_submit_get_response\n")
 
         body = self.api.get_validated_threepid(sid, "verysekrit")
 
