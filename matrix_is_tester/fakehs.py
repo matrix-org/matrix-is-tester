@@ -20,10 +20,9 @@ import json
 import os
 import random
 import ssl
-from six.moves import urllib
 from multiprocessing import Process
 
-from six.moves import BaseHTTPServer
+from six.moves import BaseHTTPServer, urllib
 
 shared_fake_hs = None
 
