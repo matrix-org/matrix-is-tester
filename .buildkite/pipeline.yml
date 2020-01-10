@@ -5,7 +5,7 @@ steps:
       - "echo '+++ Lint'"
       - "flake8 matrix_is_tester"
       - "echo '+++ isort'"
-      - "isort -rc -c -vb matrix_is_tester"
+      - "isort -c -df -sp setup.cfg -rc matrix_is_tester"
       - "echo '+++ black'"
       - "python -m black --check --diff ."
     label: "Lint"
