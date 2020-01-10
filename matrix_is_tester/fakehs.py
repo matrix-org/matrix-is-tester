@@ -16,13 +16,14 @@
 
 import atexit
 import base64
-import http.server
 import json
 import os
 import random
 import ssl
-import urllib.parse
+from six.moves import urllib
 from multiprocessing import Process
+
+from six.moves import BaseHTTPServer
 
 shared_fake_hs = None
 
@@ -61,7 +62,7 @@ def _destroy_shared():
     shared_fake_hs.tearDown()
 
 
-class _FakeHomeserverRequestHandler(http.server.BaseHTTPRequestHandler):
+class _FakeHomeserverRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/_matrix/federation/v1/openid/userinfo"):
             parsed = urllib.parse.urlparse(self.path)
@@ -104,7 +105,7 @@ class _FakeHomeserverRequestHandler(http.server.BaseHTTPRequestHandler):
 def _run_http_server():
     cert_file = os.path.join(os.path.dirname(__file__), "fakehs.pem")
 
-    httpd = http.server.HTTPServer(("localhost", 4490), _FakeHomeserverRequestHandler)
+    httpd = BaseHTTPServer.HTTPServer(("localhost", 4490), _FakeHomeserverRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile=cert_file, server_side=True)
     httpd.serve_forever()
 
