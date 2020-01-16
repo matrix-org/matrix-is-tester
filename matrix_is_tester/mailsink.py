@@ -41,7 +41,7 @@ class MailSinkSmtpServer(smtpd.SMTPServer):
         smtpd.SMTPServer.__init__(self, localaddr, remoteaddr)
         self.queue = q
 
-    def process_message(self, peer, mailfrom, rctpto, data):
+    def process_message(self, peer, mailfrom, rctpto, data, **kwargs):
         self.queue.put(
             {"peer": peer, "mailfrom": mailfrom, "rctpto": rctpto, "data": data}
         )

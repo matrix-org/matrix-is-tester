@@ -21,9 +21,9 @@ import re
 import string
 
 import requests
-from twisted.python import log
-
 from matrix_is_tester.fakehs import token_for_random_user
+
+from twisted.python import log
 
 
 class IsApi(object):
@@ -71,7 +71,7 @@ class IsApi(object):
         log.msg("Got email: %r" % (mail,))
         if "data" not in mail:
             raise Exception("Mail has no 'data'")
-        matches = re.match(r"<<<(.*)>>>", mail["data"])
+        matches = re.match(r"<<<(.*)>>>", mail["data"].decode("UTF-8"))
         if not matches.group(1):
             raise Exception("Failed to match token from mail")
 

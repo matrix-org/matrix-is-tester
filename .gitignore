@@ -1,0 +1,7 @@
+*.pyc
+
+# Twisted testing directory
+_trial_temp
+
+# Local dev resources
+.idea
