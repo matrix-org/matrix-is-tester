@@ -157,4 +157,4 @@ class BaseApiTest(object):
                 "sender": "@sender:fake.test",
             }
         )
-        self.assertEquals(body["errcode"], "THREEPID_IN_USE")
+        self.assertEquals(body["errcode"], "M_THREEPID_IN_USE")
