@@ -30,18 +30,18 @@ class V2Test(BaseApiTest, unittest.TestCase):
 
         self.fakeHs = get_shared_fake_hs()
         self.api.make_account(
-            self.fakeHs.get_addr(), token_for_user("@commonapitests:fake.test")
+            self.fakeHs.get_addr(), token_for_user("@commonapitests:127.0.0.1:4490")
         )
 
     def test_bind_and_lookup(self):
         params = self.api.request_and_submit_email_code("fakeemail3@nowhere.test")
         body = self.api.bind_email(
-            params["sid"], params["client_secret"], "@commonapitests:fake.test"
+            params["sid"], params["client_secret"], "@commonapitests:127.0.0.1:4490"
         )
 
         self.assertEquals(body["medium"], "email")
         self.assertEquals(body["address"], "fakeemail3@nowhere.test")
-        self.assertEquals(body["mxid"], "@commonapitests:fake.test")
+        self.assertEquals(body["mxid"], "@commonapitests:127.0.0.1:4490")
 
         hash_details = self.api.hash_details()
 
@@ -51,7 +51,7 @@ class V2Test(BaseApiTest, unittest.TestCase):
         )
 
         self.assertIn(lookup_str, body2["mappings"])
-        self.assertEquals(body2["mappings"][lookup_str], "@commonapitests:fake.test")
+        self.assertEquals(body2["mappings"][lookup_str], "@commonapitests:127.0.0.1:4490")
 
 
 if __name__ == "__main__":

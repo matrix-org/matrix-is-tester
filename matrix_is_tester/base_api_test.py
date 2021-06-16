@@ -83,7 +83,7 @@ class BaseApiTest(object):
         # get the mail so we don't leave it in the queue
         self.mailSink.get_mail()
         body = self.api.bind_email(
-            req_code_body["sid"], "sekrit", "@commonapitests:fake.test"
+            req_code_body["sid"], "sekrit", "@commonapitests:127.0.0.1:4490"
         )
         self.assertEquals(body["errcode"], "M_SESSION_NOT_VALIDATED")
 
@@ -112,7 +112,7 @@ class BaseApiTest(object):
                 "medium": "email",
                 "address": "ian@fake.test",
                 "room_id": "$aroom:fake.test",
-                "sender": "@sender:fake.test",
+                "sender": "@commonapitests:127.0.0.1:4490",
                 "room_alias": "#alias:fake.test",
                 "room_avatar_url": "mxc://fake.test/roomavatar",
                 "room_name": "my excellent room",
@@ -154,7 +154,7 @@ class BaseApiTest(object):
                 "medium": "email",
                 "address": "already_here@fake.test",
                 "room_id": "$aroom:fake.test",
-                "sender": "@sender:fake.test",
+                "sender": "@commonapitests:127.0.0.1:4490",
             }
         )
         self.assertEquals(body["errcode"], "M_THREEPID_IN_USE")

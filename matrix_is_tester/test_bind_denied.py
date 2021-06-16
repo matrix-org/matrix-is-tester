@@ -33,11 +33,11 @@ class AccountTest(unittest.TestCase):
     def test_bind_notYourMxid(self):
         base_url = get_or_launch_is(False)
         api = IsApi(base_url, "v2", self.mail_sink)
-        api.make_account(self.fake_hs_addr, token_for_user("@bob:fake.test"))
+        api.make_account(self.fake_hs_addr, token_for_user("@bob:127.0.0.1:4490"))
 
         params = api.request_and_submit_email_code("perfectly_valid_email@nowhere.test")
         body = api.bind_email(
-            params["sid"], params["client_secret"], "@alice:fake.test"
+            params["sid"], params["client_secret"], "@alice:127.0.0.1:4490"
         )
         self.assertEquals(body["errcode"], "M_UNAUTHORIZED")
 
