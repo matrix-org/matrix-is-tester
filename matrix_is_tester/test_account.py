@@ -32,12 +32,12 @@ class AccountTest(unittest.TestCase):
         base_url = get_or_launch_is(False)
         api = IsApi(base_url, "v2", None)
         api.make_account(
-            self.fakeHsAddr, token_for_user("@jimmy_account_test:fake.test")
+            self.fakeHsAddr, token_for_user("@jimmy_account_test:127.0.0.1:4490")
         )
 
         body = api.account()
 
-        self.assertEqual(body["user_id"], "@jimmy_account_test:fake.test")
+        self.assertEqual(body["user_id"], "@jimmy_account_test:127.0.0.1:4490")
 
 
 if __name__ == "__main__":
