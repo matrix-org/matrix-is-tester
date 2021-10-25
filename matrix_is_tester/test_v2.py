@@ -51,11 +51,14 @@ class V2Test(BaseApiTest, unittest.TestCase):
         )
 
         self.assertIn(lookup_str, body2["mappings"])
-        self.assertEquals(body2["mappings"][lookup_str], "@commonapitests:127.0.0.1:4490")
+        self.assertEquals(
+            body2["mappings"][lookup_str], "@commonapitests:127.0.0.1:4490"
+        )
 
 
 if __name__ == "__main__":
     import sys
+
     from twisted.python import log
 
     log.startLogging(sys.stdout)
