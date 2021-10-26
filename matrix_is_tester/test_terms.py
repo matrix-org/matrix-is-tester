@@ -152,6 +152,7 @@ class TermsTest(unittest.TestCase):
 
 if __name__ == "__main__":
     import sys
+
     from twisted.python import log
 
     log.startLogging(sys.stdout)
