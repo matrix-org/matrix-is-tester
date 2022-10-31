@@ -22,7 +22,7 @@ jobs:
       - name: flake8
         run: flake8 matrix_is_tester
       - name: Import order
-        run: isort -c -df -sp setup.cfg -rc matrix_is_tester
+        run: isort --check --diff --settings-path setup.cfg matrix_is_tester
       - name: Formatting
         run: python -m black --check --diff .
 
