@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+    branches: main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - name: Install project
+        run: pip install -e .[lint]
+      - name: flake8
+        run: flake8 matrix_is_tester
+      - name: Import order
+        run: isort --check --diff --settings-path setup.cfg matrix_is_tester
+      - name: Formatting
+        run: python -m black --check --diff .
+
+
