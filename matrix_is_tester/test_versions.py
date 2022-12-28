@@ -18,13 +18,6 @@
 
 import unittest
 
-import json
-
-# These are standard python unit tests, but are generally intended
-# to be run with trial. Trial doesn't capture logging nicely if you
-# use python 'logging': it only works if you use Twisted's own.
-from twisted.python import log
-
 from matrix_is_tester.is_api import IsApi
 from matrix_is_tester.launch_is import get_or_launch_is
 from matrix_is_tester.mailsink import get_shared_mailsink
