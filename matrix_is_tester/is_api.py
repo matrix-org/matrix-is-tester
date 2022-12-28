@@ -45,6 +45,7 @@ class IsApi(object):
         self.headers = None
 
         self.version = version
+        self.base_url = base_url
         if version == "v1":
             self.apiRoot = base_url + "/_matrix/identity/api/v1"
         elif version == "v2":
@@ -177,6 +178,10 @@ class IsApi(object):
             json={"user_accepts": user_accepts},
             headers=self.headers,
         )
+        return resp.json()
+
+    def get_versions(self):
+        resp = requests.get(self.base_url + "/versions")
         return resp.json()
 
     def register(self, matrix_server_name, access_token):
